@@ -1,0 +1,27 @@
+.container {
+    margin: 100px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;
+}
+
+.slogan {
+    float: left;
+    width: 340px;
+    height: 400px;
+}
+
+.login {
+    float: left;
+    width: 250px;
+    height: 120px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.signup {
+    float: left;
+    width: 250px;
+    height: 270px;
+    margin-left: 10px;
+}
