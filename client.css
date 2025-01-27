@@ -14,14 +14,35 @@
 .login {
     float: left;
     width: 250px;
-    height: 120px;
+    height: 100px;
     margin-left: 10px;
     margin-bottom: 10px;
+    text-align: left;
+}
+
+label {
+    width: 70px;
+    text-align: left;
+    margin: 5px auto;
+    float: left;
+}
+
+.login input {
+    width: 150px;
+    margin: 5px auto;
+    float: right;
+}
+
+#submit {
+    width: 60px;
+    margin: 5px auto;
+    float: right;
+    clear: both;
 }
 
 .signup {
     float: left;
     width: 250px;
-    height: 270px;
+    height: 290px;
     margin-left: 10px;
 }
