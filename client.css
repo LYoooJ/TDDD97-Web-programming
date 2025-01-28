@@ -41,7 +41,7 @@ label {
 
 button {
     width: 60px;
-    margin: 5px auto;
+    /* margin: 5px auto; */
     float: right;
     clear: both;   
 }
@@ -68,9 +68,17 @@ button {
 .form_group {
     height: 25px;
     display: flex;
+    justify-content: space-between;
 }
 
 select {
     width: 150px;
     margin: 2.5px auto;
+}
+
+#error_message{
+    color: red;
+    width: 180px;
+    text-align: left;
+    float: left;    
 }
