@@ -1,5 +1,6 @@
 body {
     background-color: #7898cc;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .container {
@@ -25,24 +26,24 @@ body {
     background-color: #ffffff;
 }
 
+.login input {
+    width: 150px;
+    margin: 2.5px auto;
+    float: right;
+}
+
 label {
-    width: 70px;
+    width: 100px;
     text-align: left;
-    margin: 5px auto;
+    margin: 2.5px auto;
     float: left;
 }
 
-.login input {
-    width: 150px;
-    margin: 5px auto;
-    float: right;
-}
-
-#submit {
+button {
     width: 60px;
     margin: 5px auto;
     float: right;
-    clear: both;
+    clear: both;   
 }
 
 .signup {
@@ -51,4 +52,25 @@ label {
     height: 290px;
     margin-left: 10px;
     background-color: #ffffff;
+}
+
+.signup h4 {
+    height: 10px;
+    text-align: center;
+}
+
+.signup input {
+    width: 150px;
+    margin: 2.5px auto;
+    float: right; 
+}
+
+.form_group {
+    height: 25px;
+    display: flex;
+}
+
+select {
+    width: 150px;
+    margin: 2.5px auto;
 }
