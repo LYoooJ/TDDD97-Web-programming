@@ -8,7 +8,9 @@ window.onload = function(){
 //window.alert() is not allowed to be used in your implementation.
 
 let welcomeView = document.getElementById("welcomeview");
-document.getElementById("view").innerHTML += welcomeView.innerHTML;
+let profileView = document.getElementById("profileview");
+let nowview = welcomeView;
+document.getElementById("view").innerHTML += nowview.innerHTML;
 // window.alert("Hello TDDD97!");
 };
 
@@ -43,6 +45,26 @@ function validate() {
         return false;
     }
     errorMsg.textContent = "";
+    signUp(document.getElementById("signupform"))
     return true;
     
 };
+
+function signUp(form){
+    let profile = {
+        email : form.email_signup.value,
+        password : form.password_signup.value,
+        firstname : form.firstname.value,
+        familyname :form.familyname.value,
+        gender :form.gender.value,
+        city :form.city.value,
+        country :form.country.value,
+    }
+    if(serverstub.signUp(profile).success.valueOf()){
+        nowview = document.getElementById("profileview");
+    }else{
+        nowview = document.getElementById("welcomeview");
+    }
+    document.getElementById("view").innerHTML = nowview.innerHTML;
+}
+    
