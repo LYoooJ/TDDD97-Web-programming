@@ -39,6 +39,13 @@ label {
     float: left;
 }
 
+#login_error_message{
+    color: red;
+    width: 180px;
+    text-align: left;
+    float: left;    
+}
+
 button {
     width: 60px;
     /* margin: 5px auto; */
@@ -82,3 +89,4 @@ select {
     text-align: left;
     float: left;    
 }
+

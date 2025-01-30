@@ -14,6 +14,26 @@ document.getElementById("view").innerHTML += nowview.innerHTML;
 // window.alert("Hello TDDD97!");
 };
 
+function login_validate(form){
+    let login = {
+        email : form.email.value,
+        password : form.password.value,
+    }
+    let return_info =serverstub.signIn(login.email, login.password);
+    if(return_info.success){
+        nowview = document.getElementById("profileview");
+    }else{
+        nowview = document.getElementById("welcomeview");
+    }
+    document.getElementById("view").innerHTML = nowview.innerHTML;
+    
+    let errorMessageElement = document.getElementById("login_error_message");
+    if (errorMessageElement) {
+        errorMessageElement.textContent = return_info.message;
+    }
+}
+
+
 function matchPassword() {
     let psw = document.getElementById("password_signup").value;
     let rePsw = document.getElementById("repeatPSW").value;
