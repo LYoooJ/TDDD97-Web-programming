@@ -6,10 +6,14 @@ window.onload = function(){
 //code that is executed as the page is loaded.
 //You shall put your own custom code here.
 //window.alert() is not allowed to be used in your implementation.
+let token = localStorage.getItem("token");
+let nowview;
 
-let welcomeView = document.getElementById("welcomeview");
-let profileView = document.getElementById("profileview");
-let nowview = welcomeView;
+if (token) {
+    nowview = document.getElementById("profileview");
+} else {
+    nowview = document.getElementById("welcomeview");
+}
 document.getElementById("view").innerHTML += nowview.innerHTML;
 // window.alert("Hello TDDD97!");
 };
@@ -21,6 +25,7 @@ function login_validate(form){
     }
     let return_info =serverstub.signIn(login.email, login.password);
     if(return_info.success){
+        localStorage.setItem("token", return_info.data.valueOf());
         nowview = document.getElementById("profileview");
     }else{
         nowview = document.getElementById("welcomeview");
