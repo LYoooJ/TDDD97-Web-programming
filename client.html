@@ -16,7 +16,7 @@
                         </div> 
                         <div class="form_group">
                             <label for="password">Password</label>
-                            <input type="text" id="password" name="password" required>
+                            <input type="password" id="password" name="password" required>
                         </div> 
                         <div class="form_group">
                             <div id="login_error_message"> </div> 
@@ -56,11 +56,11 @@
                         </div>
                         <div class="form_group">
                             <label for="password_signup">Password</label>
-                            <input type="text" id="password_signup" name="password_signup" required>    
+                            <input type="password" id="password_signup" name="password_signup" required>    
                         </div>
                         <div class="form_group">
                             <label for="repeatPSW">Repeat PSW</label>
-                            <input type="text" id="repeatPSW" name="repeatPSW" required>    
+                            <input type="password" id="repeatPSW" name="repeatPSW" required>    
                         </div>   
                         <div class="form_group">
                             <div id="error_message"> </div>      
@@ -70,9 +70,20 @@
                 </div>
             </div>
         </script>
-        <script type="text/view" id="profileview"> Profile View </script>
+        <script type="text/view" id="profileview"> 
+            <div id="tab_view"> 
+                <button class="tab_button on" id="home" onclick="openTab('home');"> Home </button>
+                <button class="tab_button" id="browse" onclick="openTab('browse');"> Browse </button>  
+                <button class="tab_button" id="account" onclick="openTab('account');"> Account </button>
+            </div>
+
+            <div id="home_tab" class="tab_page on"> Home </div>  
+            <div id="browse_tab" class="tab_page"> Browse </div>  
+            <div id="account_tab" class="tab_page"> Account </div>   
+        </script>
     </head>
     <body>
-        <div id="view"></div>
+        <div id="view">
+        </div>
     </body>
 </html>

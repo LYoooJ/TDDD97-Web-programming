@@ -90,3 +90,33 @@ select {
     float: left;    
 }
 
+.tab_page {
+    display: none;
+}
+
+.tab_page.on {
+    display: block;
+}
+
+#tab_view {
+    background-color: white;
+    margin-left: 100px;
+    margin-bottom: 10px;
+    width: 600px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.tab_button {
+    background-color: white;
+    width: 200px;
+    height: 60px;
+    text-align: center;
+    float: left;   
+}
+
+.tab_button.on {
+    background-color: rgb(185, 182, 182);   
+    font-weight: bold;
+}

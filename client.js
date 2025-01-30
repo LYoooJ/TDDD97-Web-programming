@@ -99,4 +99,17 @@ function signUp(form){
         errorMessageElement.textContent = return_info.message;
     }
 }
-    
+
+function openTab(tabId) {
+    let allTab = document.querySelectorAll('.tab_button, .tab_page');
+    allTab.forEach(function(element) {
+        element.classList.remove('on');
+    });
+
+    let onButton = document.getElementById(tabId);
+    onButton.classList.add('on');
+
+    let onTab = document.getElementById(tabId + '_tab');
+    onTab.classList.add('on');
+
+}
