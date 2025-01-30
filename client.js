@@ -60,11 +60,18 @@ function signUp(form){
         city :form.city.value,
         country :form.country.value,
     }
-    if(serverstub.signUp(profile).success.valueOf()){
+    let return_info =serverstub.signUp(profile);
+
+    if(return_info.success.valueOf()){
         nowview = document.getElementById("profileview");
     }else{
         nowview = document.getElementById("welcomeview");
     }
     document.getElementById("view").innerHTML = nowview.innerHTML;
+
+    let errorMessageElement = document.getElementById("error_message");
+    if (errorMessageElement) {
+        errorMessageElement.textContent = return_info.message;
+    }
 }
     
