@@ -38,10 +38,50 @@ function login_validate(form){
     }
 }
 
+function signout_validate() {
+    try {
+    let token = localStorage.getItem("token");
+    let return_info = serverstub.signOut(token);
 
-function matchPassword() {
-    let psw = document.getElementById("password_signup").value;
-    let rePsw = document.getElementById("repeatPSW").value;
+        if (return_info.success) {
+            localStorage.removeItem("token");
+            nowview = document.getElementById("welcomeview");
+            document.getElementById("view").innerHTML = nowview.innerHTML;
+        }
+        else {
+            let errorMessageElement = document.getElementById("signout_error");
+            if (errorMessageElement) {
+                errorMessageElement.textContent = return_info.message;
+            }
+        }
+    }
+    catch(e) {
+        console.error("error");
+    }
+}
+
+function tryChangePassword(form) {
+    let token = localStorage.getItem("token");
+    let currentPsw = form.currentpsw.value;
+    let newPsw = form.changepsw.value;
+    let repeatNewPsw = form.repeatchangepsw.value;
+    let errorMsg = document.getElementById("changepsw_error");
+
+    if (!matchPassword(newPsw, repeatNewPsw)) {
+        errorMsg.textContent = "Your passwords must be the same.";
+        return false;
+    }
+
+    let return_info = serverstub.changePassword(token, currentPsw, newPsw);
+    errorMsg.textContent = return_info.message;
+    if (!return_info.success.valueOf()) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function matchPassword(psw, rePsw) {
     if (psw != rePsw) {
         return false;
     }
@@ -60,8 +100,10 @@ function minLengthPassword() {
 
 function validate() {
     let errorMsg = document.getElementById("error_message");
+    let password_signup = document.getElementById("password_signup").value;
+    let repeatPsw = document.getElementById("repeatPSW").value;
     
-    if (!matchPassword()) {
+    if (!matchPassword(password_signup, repeatPsw)) {
         errorMsg.textContent = "Your passwords must be the same.";
         return false;
     }
@@ -88,7 +130,14 @@ function signUp(form){
     let return_info =serverstub.signUp(profile);
 
     if(return_info.success.valueOf()){
-        nowview = document.getElementById("profileview");
+        let return_info =serverstub.signIn(profile.email, profile.password);
+        if (return_info.success.valueOf()) {
+            localStorage.setItem("token", return_info.data.valueOf());
+            nowview = document.getElementById("profileview");
+        }
+        else {
+            nowview = document.getElementById("welcomeview");
+        }
     }else{
         nowview = document.getElementById("welcomeview");
     }

@@ -120,3 +120,43 @@ select {
     background-color: rgb(185, 182, 182);   
     font-weight: bold;
 }
+
+#account_tab {
+    background-color: white;    
+    margin-left: 200px;
+    width: 400px;
+    height: 110px;    
+}
+
+#account_tab label {
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+#account_tab input {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#changepsw_error {
+    color: red;
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+#btnspace {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#signoutbtn {
+    color: white;
+    background-color: dimgray;
+    width: 400px;
+}
+
+#signout_error {
+    color: red;
+    text-align: center;
+    width: 400px;
+}

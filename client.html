@@ -79,7 +79,32 @@
 
             <div id="home_tab" class="tab_page on"> Home </div>  
             <div id="browse_tab" class="tab_page"> Browse </div>  
-            <div id="account_tab" class="tab_page"> Account </div>   
+            <div id="account_tab" class="tab_page"> 
+                <form id="changepswform" onsubmit="tryChangePassword(this); return false;">
+                    <div class="form_group"> 
+                        <label for="currentpsw">Current password </label>
+                        <input type="password" id="currentpsw" name="currentpsw" required>
+                    </div>
+                    <div class="form_group"> 
+                        <label for="changepsw">New password </label>
+                        <input type="password" id="changepsw" name="changepsw" required>
+                    </div>
+                    <div class="form_group">  
+                        <label for="repeatchangepsw">Repeat new password </label>
+                        <input type="password" id="repeatchangepsw" name="repeatchangepsw" required>         
+                    </div>
+                    <div class="form_group">
+                        <div id="changepsw_error"> </div>    
+                        <div id="btnspace">  
+                            <button type="submit" id="changepswbtn" > Change </button>   
+                        </div>
+                    </div>    
+                </form>
+                <form id="signoutform" onsubmit="signout_validate(); return false;">
+                    <button type="submit" id="signoutbtn"> signOut </button>
+                </form>
+                <div id="signout_error"></div>
+            </div>   
         </script>
     </head>
     <body>
