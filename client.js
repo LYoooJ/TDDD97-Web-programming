@@ -219,3 +219,11 @@ function openTab(tabId) {
         errorMsg.textContent = "";        
     }
 }
+
+function tryPostMessage(form){
+    let text = form.postingmsg.value;
+    let token = localStorage.getItem("token");
+    let email = localStorage.getItem("email");
+    let return_info =serverstub.postMessage(token, text, email);
+
+}
