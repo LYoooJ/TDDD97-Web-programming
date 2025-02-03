@@ -88,9 +88,35 @@
                     <h4> msgwall </h4>
                 </div>
             </div>  
-            <div id="browse_tab" class="tab_page"> Browse </div>  
+            <div id="browse_tab" class="tab_page">  
+                <div id="searchform">
+                    <form id="searchuser" onsubmit="trySearchUser(this); return false;"> 
+                        <h4> Search User </h4>
+                        <div class="form_group"> 
+                            <label for="useremail"> User Email </label>
+                            <input type="email" id="useremail" name="useremail" required>
+                        </div>
+                        <div class="form_group">
+                            <div id="search_error"> </div>    
+                            <button type="submit" id="searchuserbtn" > Search </button>   
+                        </div>    
+                    </form>
+                </div>
+                <div id="searchuserinfo" class="searchinfo"> 
+                    <div class="person_info" > 
+                        <h4> person_info </h4>
+                    </div>
+                    <div class="postmsg" > 
+                        <h4> postmsg </h4>
+                    </div>
+                    <div class="msgwall" > 
+                        <h4> msgwall </h4>
+                    </div>
+                </div>
+            </div>  
             <div id="account_tab" class="tab_page"> 
                 <form id="changepswform" onsubmit="tryChangePassword(this); return false;">
+                    <h4> Change Password </h4>
                     <div class="form_group"> 
                         <label for="currentpsw">Current password </label>
                         <input type="password" id="currentpsw" name="currentpsw" required>
@@ -105,7 +131,7 @@
                     </div>
                     <div class="form_group">
                         <div id="changepsw_error"> </div>    
-                        <div id="btnspace">  
+                        <div class="btnspace">  
                             <button type="submit" id="changepswbtn" > Change </button>   
                         </div>
                     </div>    

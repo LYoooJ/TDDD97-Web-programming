@@ -123,11 +123,12 @@ select {
 }
 
 #account_tab {
+    text-align: center;
     background-color: white;    
     /*margin-left: 200px;*/
     margin: 40px auto;
     width: 400px;
-    height: 110px;    
+    height: 140px;    
 }
 
 #account_tab label {
@@ -146,7 +147,7 @@ select {
     margin: 2.5px auto;
 }
 
-#btnspace {
+.btnspace {
     width: 150px;
     margin: 2.5px auto;
 }
@@ -193,4 +194,41 @@ select {
     height: 290px;
     margin-left: 10px;
     background-color: #ffffff;
+}
+
+#searchform {
+    text-align: center;
+    background-color: white;    
+    margin: 40px auto;
+    width: 250px;
+    height: 110px;    
+}
+
+#browse_tab label {
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+#browse_tab input {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#search_error {
+    color: red;
+}
+
+#searchuserinfo {
+    margin: 20px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;  
+}
+
+.searchinfo {
+    display: none;
+}
+
+.searchinfo.on {
+    display: block;
 }

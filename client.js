@@ -117,6 +117,30 @@ function validate() {
     
 };
 
+function trySearchUser(form) {
+    let searchEmail = form.useremail.value;
+    let token = localStorage.getItem("token");
+    let errorMsg = document.getElementById("search_error");
+
+    let return_info = serverstub.getUserDataByEmail(token, searchEmail);
+
+    if (return_info.success.valueOf()) {
+        let searchUserInfo = document.getElementById("searchuserinfo");
+        if (!searchUserInfo.classList.contains("on")) {
+            searchUserInfo.classList.add("on");
+        }
+    } else {
+        errorMsg.textContent = return_info.message;
+        let searchUserInfo = document.getElementById("searchuserinfo");
+        if (searchUserInfo.classList.contains("on")) {
+            searchUserInfo.classList.remove("on");
+        }        
+        return false;
+    }
+    errorMsg.textContent = "";
+    return true;
+}
+
 function signUp(form){
     let profile = {
         email : form.email_signup.value,
@@ -161,4 +185,13 @@ function openTab(tabId) {
     let onTab = document.getElementById(tabId + '_tab');
     onTab.classList.add('on');
 
+    if (tabId === "browse") {
+        let searchUserInfo = document.getElementById("searchuserinfo");
+        if (searchUserInfo.classList.contains("on")) {
+            searchUserInfo.classList.remove("on");
+        }  
+        
+        let errorMsg = document.getElementById("search_error");
+        errorMsg.textContent = "";        
+    }
 }
