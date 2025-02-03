@@ -115,11 +115,11 @@
                     
                 </div>
                 <div class="msgwall" > 
-                    <form onsubmit="get_homedata(); return false;">
+                    <form onsubmit="msgRenew('home'); return false;">
                         <h4> msgwall </h4>
                         <div id="message_container_home" class="message_container">  
                         </div>
-                        <button type="submit" id="renewbtn" > Renew </button>  
+                        <button type="submit" class="renewbtn" > Renew </button>  
                     </form>
                 </div>
             </div>  
@@ -174,10 +174,11 @@
                         </form>
                     </div>
                     <div class="msgwall" > 
-                        <h4> msgwall </h4>
-                        <div id="message_container" class="message_container"> 
-
-                        </div>
+                        <form onsubmit="msgRenew('browse'); return false;">
+                            <h4> msgwall </h4>
+                            <div id="message_container" class="message_container"> </div>
+                            <button type="submit" class="renewbtn" > Renew </button>  
+                        </form>
                     </div>
                 </div>
             </div>  

@@ -2,6 +2,7 @@ displayView = function(){
     // the code required to display a view
 };
 
+let first_time = true;
 
 window.onload = function(){
 //code that is executed as the page is loaded.
@@ -9,13 +10,13 @@ window.onload = function(){
 //window.alert() is not allowed to be used in your implementation.
 let token = localStorage.getItem("token");
 let nowview;
-let first_time = true;
 if (token) {
     nowview = document.getElementById("profileview");
 } else {
     nowview = document.getElementById("welcomeview");
 }
 document.getElementById("view").innerHTML += nowview.innerHTML;
+
 if(first_time){
     get_homedata();
     first_time =  false;
@@ -36,7 +37,8 @@ function login_validate(form){
         nowview = document.getElementById("welcomeview");
     }
     document.getElementById("view").innerHTML = nowview.innerHTML;
-    
+    get_homedata();
+
     let errorMessageElement = document.getElementById("login_error_message");
     if (errorMessageElement) {
         errorMessageElement.textContent = return_info.message;
@@ -180,13 +182,13 @@ function signUp(form){
         nowview = document.getElementById("welcomeview");
     }
     document.getElementById("view").innerHTML = nowview.innerHTML;
+    get_homedata();
 
     let errorMessageElement = document.getElementById("error_message");
     if (errorMessageElement) {
         errorMessageElement.textContent = return_info.message;
     }
 }
-
 
 function get_homedata(){
     let token = localStorage.getItem("token");
@@ -201,6 +203,14 @@ function get_homedata(){
     loadMessage("message_container_home", homedata.data.email);
 }
 
+function msgRenew(tabId) {
+    if (tabId === "home") {
+        loadMessage("message_container_home", document.getElementById("email_info").innerText);
+    }
+    else if (tabId === "browse") {
+        loadMessage("message_container", document.getElementById("search_email_info").innerText);
+    }
+}
 
 function openTab(tabId) {
     let allTab = document.querySelectorAll('.tab_button, .tab_page');
@@ -231,6 +241,7 @@ function tryPostMessage(form){
     let return_info =serverstub.postMessage(token, text, null);
     let errorMessageElement = document.getElementById("post_error_message");
     errorMessageElement.textContent = return_info.message;
+    form.post_msg_content.value = "";
 }
 
 function tryPostMessageToOther(form) {
@@ -247,6 +258,7 @@ function loadMessage(message_container, email) {
     let messageContainer = document.getElementById(message_container);
     let token = localStorage.getItem("token");
     let return_info = serverstub.getUserMessagesByEmail(token, email);
+    messageContainer.innerHTML = [];
 
     if (return_info.data) {
         return_info.data.forEach(e => {

@@ -326,7 +326,8 @@ select {
     border: 1px solid black;
     margin: 2.5px auto;  
 }
-#renewbtn{
+
+.renewbtn{
     width: 230px;
     height: 20px;
     margin: 2.5px auto;  
