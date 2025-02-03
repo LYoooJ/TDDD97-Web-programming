@@ -2,19 +2,24 @@ displayView = function(){
     // the code required to display a view
 };
 
+
 window.onload = function(){
 //code that is executed as the page is loaded.
 //You shall put your own custom code here.
 //window.alert() is not allowed to be used in your implementation.
 let token = localStorage.getItem("token");
 let nowview;
-
+let first_time = true;
 if (token) {
     nowview = document.getElementById("profileview");
 } else {
     nowview = document.getElementById("welcomeview");
 }
 document.getElementById("view").innerHTML += nowview.innerHTML;
+if(first_time){
+    get_homedata();
+    first_time =  false;
+}
 // window.alert("Hello TDDD97!");
 };
 
@@ -171,6 +176,19 @@ function signUp(form){
     if (errorMessageElement) {
         errorMessageElement.textContent = return_info.message;
     }
+}
+
+
+function get_homedata(){
+    let token = localStorage.getItem("token");
+    homedata = serverstub.getUserDataByToken(token);
+    document.getElementById("email_info").innerText = homedata.data.email;
+    document.getElementById("firstname_info").innerText = homedata.data.firstname;
+    document.getElementById("familyname_info").innerText = homedata.data.familyname;
+    document.getElementById("gender_info").innerText = homedata.data.gender;
+    document.getElementById("city_info").innerText = homedata.data.city;
+    document.getElementById("country_info").innerText = homedata.data.country;
+
 }
 
 function openTab(tabId) {
