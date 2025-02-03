@@ -110,12 +110,14 @@
                     <form id="postingmsg" onsubmit="tryPostMessage(this); return false;">
                         <input type="text" id="post_msg_content" name="post_msg_content" required> 
                         <button type="submit" id="postmsgbtn" > Post </button>  
-                        <div id="post_error_message"> </div>
+                        <div id="post_error_message"> </div> 
                     </form>
                     
                 </div>
                 <div class="msgwall" > 
                     <h4> msgwall </h4>
+                    <div id="message_container_home" class="message_container"> 
+                    </div>
                 </div>
             </div>  
             <div id="browse_tab" class="tab_page">  
@@ -165,6 +167,7 @@
                         <form id="postingmsg_to_other" onsubmit="tryPostMessageToOther(this); return false;">
                             <input type="text" id="post_msg_content_to_other" name="post_msg_content_to_other" required> 
                             <button type="submit" id="postmsgbtn_to_other" > Post </button>  
+                            <div id="post_error_message_to_other"> </div> 
                         </form>
                     </div>
                     <div class="msgwall" > 

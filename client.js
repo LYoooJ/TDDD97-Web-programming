@@ -137,7 +137,7 @@ function trySearchUser(form) {
         document.getElementById("search_city_info").innerText = return_info.data.city;
         document.getElementById("search_country_info").innerText = return_info.data.country;
 
-        loadMessage();
+        loadMessage("message_container", return_info.data.email);
 
         let searchUserInfo = document.getElementById("searchuserinfo");
         if (!searchUserInfo.classList.contains("on")) {
@@ -198,7 +198,9 @@ function get_homedata(){
     document.getElementById("city_info").innerText = homedata.data.city;
     document.getElementById("country_info").innerText = homedata.data.country;
 
+    loadMessage("message_container_home", homedata.data.email);
 }
+
 
 function openTab(tabId) {
     let allTab = document.querySelectorAll('.tab_button, .tab_page');
@@ -224,7 +226,7 @@ function openTab(tabId) {
 }
 
 function tryPostMessage(form){
-    let text = form.postingmsg.value;
+    let text = form.post_msg_content.value;
     let token = localStorage.getItem("token");
     let return_info =serverstub.postMessage(token, text, null);
     let errorMessageElement = document.getElementById("post_error_message");
@@ -236,14 +238,14 @@ function tryPostMessageToOther(form) {
     let token = localStorage.getItem("token");
     let email = document.getElementById("search_email_info").textContent;
     let return_info = serverstub.postMessage(token, text, email);
-
+    let errorMessageElement = document.getElementById("post_error_message_to_other");
+    errorMessageElement.textContent = return_info.message;
     form.post_msg_content_to_other.value = "";
 }
 
-function loadMessage() {
-    let messageContainer = document.getElementById("message_container");
+function loadMessage(message_container, email) {
+    let messageContainer = document.getElementById(message_container);
     let token = localStorage.getItem("token");
-    let email = document.getElementById("search_email_info").textContent;
     let return_info = serverstub.getUserMessagesByEmail(token, email);
 
     if (return_info.data) {

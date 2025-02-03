@@ -216,23 +216,15 @@ select {
 
 #post_msg_content{
     width: 245px;
-    height: 55x;    
-    margin-top: 20px;
+    height: 55px;    
+    margin-top: 20px ;
     margin-left: 2.5px;
     margin-right: 2.5px;
 }
 
-#postmsgbtn{
-    width: 250px;
-    height: 20px; 
-    margin-top: 10 px ;  
-    margin: 5px auto;
-    text-align: center;
-}
-
 #post_msg_content_to_other{
     width: 245px;
-    height: 78px;    
+    height: 55px;    
     margin-top: 20px ;
     margin-left: 2.5px;
     margin-right: 2.5px;
@@ -245,6 +237,29 @@ select {
     margin: 5px auto;
     text-align: center;
 }
+
+#post_error_message{
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;
+}
+
+#post_error_message_to_other {
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;    
+}
+
+#postmsgbtn{
+    width: 250px;
+    height: 20px; 
+    margin-top: 10 px ;  
+    margin: 5px auto;
+    text-align: center;
+}
+
 
 .msgwall {
     float: left;
@@ -259,6 +274,8 @@ select {
     margin: 5px auto;
     text-align: center;    
 }
+
+
 
 #searchform {
     text-align: center;
@@ -304,6 +321,7 @@ select {
     border: 1px solid black;
     margin: 2.5px auto;  
 }
+
 
 #post_error_message{
     color: red;
