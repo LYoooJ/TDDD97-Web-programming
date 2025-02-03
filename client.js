@@ -126,7 +126,8 @@ function trySearchUser(form) {
     let searchEmail = form.useremail.value;
     let token = localStorage.getItem("token");
     let errorMsg = document.getElementById("search_error");
-
+    let messageContainer = document.getElementById("message_container");
+    messageContainer.innerHTML = "";
     let return_info = serverstub.getUserDataByEmail(token, searchEmail);
     if (return_info.success.valueOf()) {
         document.getElementById("search_email_info").innerText = return_info.data.email;
@@ -135,6 +136,8 @@ function trySearchUser(form) {
         document.getElementById("search_gender_info").innerText = return_info.data.gender;
         document.getElementById("search_city_info").innerText = return_info.data.city;
         document.getElementById("search_country_info").innerText = return_info.data.country;
+
+        loadMessage();
 
         let searchUserInfo = document.getElementById("searchuserinfo");
         if (!searchUserInfo.classList.contains("on")) {
@@ -223,7 +226,30 @@ function openTab(tabId) {
 function tryPostMessage(form){
     let text = form.postingmsg.value;
     let token = localStorage.getItem("token");
-    let email = localStorage.getItem("email");
-    let return_info =serverstub.postMessage(token, text, email);
+    let return_info =serverstub.postMessage(token, text, null);
+    let errorMessageElement = document.getElementById("post_error_message");
+    errorMessageElement.textContent = return_info.message;
+}
 
+function tryPostMessageToOther(form) {
+    let text = form.post_msg_content_to_other.value;
+    let token = localStorage.getItem("token");
+    let email = document.getElementById("search_email_info").textContent;
+    let return_info = serverstub.postMessage(token, text, email);
+
+    form.post_msg_content_to_other.value = "";
+}
+
+function loadMessage() {
+    let messageContainer = document.getElementById("message_container");
+    let token = localStorage.getItem("token");
+    let email = document.getElementById("search_email_info").textContent;
+    let return_info = serverstub.getUserMessagesByEmail(token, email);
+
+    if (return_info.data) {
+        return_info.data.forEach(e => {
+            let newMsg = '<div>' + e.writer + ': ' + e.content + '</div>';
+            messageContainer.innerHTML += newMsg;
+        });
+    }
 }

@@ -216,13 +216,29 @@ select {
 
 #post_msg_content{
     width: 245px;
+    height: 55x;    
+    margin-top: 20px;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+
+#postmsgbtn{
+    width: 250px;
+    height: 20px; 
+    margin-top: 10 px ;  
+    margin: 5px auto;
+    text-align: center;
+}
+
+#post_msg_content_to_other{
+    width: 245px;
     height: 78px;    
     margin-top: 20px ;
     margin-left: 2.5px;
     margin-right: 2.5px;
 }
 
-#postmsgbtn{
+#postmsgbtn_to_other{
     width: 250px;
     height: 20px; 
     margin-top: 10 px ;  
@@ -239,7 +255,7 @@ select {
 }
 
 .msgwall h4 {
-    height: 5px;
+    height: 20px;
     margin: 5px auto;
     text-align: center;    
 }
@@ -257,7 +273,7 @@ select {
     margin: 2.5px auto;
 }
 
-#browse_tab input {
+#useremail {
     width: 150px;
     margin: 2.5px auto;
 }
@@ -279,4 +295,19 @@ select {
 
 .searchinfo.on {
     display: block;
+}
+
+.message_container {
+    width: 230px;
+    height: 210px; 
+    overflow-y: auto;
+    border: 1px solid black;
+    margin: 2.5px auto;  
+}
+
+#post_error_message{
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;
 }
