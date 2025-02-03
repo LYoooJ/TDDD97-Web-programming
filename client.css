@@ -100,20 +100,21 @@ select {
 
 #tab_view {
     background-color: white;
-    margin-left: 100px;
-    margin-bottom: 10px;
+    /*margin-left: 100px;
+    margin-bottom: 10px;*/
+    margin: 40px auto;
     width: 600px;
     height: 60px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .tab_button {
     background-color: white;
     width: 200px;
     height: 60px;
-    text-align: center;
-    float: left;   
+    text-align: center;  
 }
 
 .tab_button.on {
@@ -159,4 +160,36 @@ select {
     color: red;
     text-align: center;
     width: 400px;
+}
+
+#home_tab{
+    margin: 100px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;
+}
+
+.person_info {
+    float: left;
+    width: 340px;
+    height: 400px;
+    background-color: #ffffff;
+}
+
+.postmsg {
+    float: left;
+    width: 250px;
+    height: 100px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    text-align: left;    
+    background-color: #ffffff;
+}
+
+.msgwall {
+    float: left;
+    width: 250px;
+    height: 290px;
+    margin-left: 10px;
+    background-color: #ffffff;
 }
