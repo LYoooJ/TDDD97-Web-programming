@@ -10,6 +10,7 @@ window.onload = function(){
 //window.alert() is not allowed to be used in your implementation.
 let token = localStorage.getItem("token");
 let nowview;
+//change view depending on token
 if (token) {
     nowview = document.getElementById("profileview");
 } else {
@@ -17,12 +18,14 @@ if (token) {
 }
 document.getElementById("view").innerHTML += nowview.innerHTML;
 
+//only reload one time
 if(first_time){
     get_homedata();
     first_time =  false;
 }
 // window.alert("Hello TDDD97!");
 };
+
 
 function login_validate(form){
     let login = {
@@ -79,6 +82,11 @@ function tryChangePassword(form) {
         return false;
     }
 
+    if (!minLengthPassword(newPsw, repeatNewPsw)) {
+        errorMsg.textContent = "should be at least 8 characters.";
+        return false;
+    }
+
     let return_info = serverstub.changePassword(token, currentPsw, newPsw);
     errorMsg.textContent = return_info.message;
     if (!return_info.success.valueOf()) {
@@ -95,10 +103,7 @@ function matchPassword(psw, rePsw) {
     return true;
 };
 
-function minLengthPassword() {
-    let psw = document.getElementById("password_signup").value;
-    let rePsw = document.getElementById("repeatPSW").value;    
-
+function minLengthPassword(psw, rePsw) {
     if (psw.length < 8 || rePsw.length < 8) {
         return false;
     }
@@ -114,7 +119,7 @@ function validate() {
         errorMsg.textContent = "Your passwords must be the same.";
         return false;
     }
-    if (!minLengthPassword()) {
+    if (!minLengthPassword(password_signup, repeatPsw)) {
         errorMsg.textContent = "Password should be at least 8 characters.";
         return false;
     }
