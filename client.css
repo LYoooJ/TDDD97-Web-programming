@@ -233,7 +233,6 @@ select {
 #postmsgbtn_to_other{
     width: 250px;
     height: 20px; 
-    margin-top: 10 px ;  
     margin: 5px auto;
     text-align: center;
 }
@@ -254,8 +253,7 @@ select {
 
 #postmsgbtn{
     width: 250px;
-    height: 20px; 
-    margin-top: 10 px ;  
+    height: 20px;   
     margin: 5px auto;
     text-align: center;
 }
@@ -319,7 +317,6 @@ select {
 }
 
 .message_container {
-    float: flex;
     width: 230px;
     height: 180px; 
     overflow-y: auto;
