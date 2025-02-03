@@ -197,6 +197,7 @@ function get_homedata(){
 
 }
 
+
 function openTab(tabId) {
     let allTab = document.querySelectorAll('.tab_button, .tab_page');
     allTab.forEach(function(element) {
@@ -218,12 +219,16 @@ function openTab(tabId) {
         let errorMsg = document.getElementById("search_error");
         errorMsg.textContent = "";        
     }
+
+    if(tabId === "home"){
+        get_msgwall_data();
+    }
 }
 
 function tryPostMessage(form){
-    let text = form.postingmsg.value;
+    let text = form.post_msg_content.value;
     let token = localStorage.getItem("token");
-    let email = localStorage.getItem("email");
-    let return_info =serverstub.postMessage(token, text, email);
-
+    let return_info =serverstub.postMessage(token, text, null);
+    let errorMessageElement = document.getElementById("post_error_message");
+    errorMessageElement.textContent = return_info.message;
 }
