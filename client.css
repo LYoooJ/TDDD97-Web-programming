@@ -124,7 +124,8 @@ select {
 
 #account_tab {
     background-color: white;    
-    margin-left: 200px;
+    /*margin-left: 200px;*/
+    margin: 40px auto;
     width: 400px;
     height: 110px;    
 }
