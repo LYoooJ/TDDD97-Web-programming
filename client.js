@@ -128,8 +128,14 @@ function trySearchUser(form) {
     let errorMsg = document.getElementById("search_error");
 
     let return_info = serverstub.getUserDataByEmail(token, searchEmail);
-
     if (return_info.success.valueOf()) {
+        document.getElementById("search_email_info").innerText = return_info.data.email;
+        document.getElementById("search_firstname_info").innerText = return_info.data.firstname;
+        document.getElementById("search_familyname_info").innerText = return_info.data.familyname;
+        document.getElementById("search_gender_info").innerText = return_info.data.gender;
+        document.getElementById("search_city_info").innerText = return_info.data.city;
+        document.getElementById("search_country_info").innerText = return_info.data.country;
+
         let searchUserInfo = document.getElementById("searchuserinfo");
         if (!searchUserInfo.classList.contains("on")) {
             searchUserInfo.classList.add("on");
