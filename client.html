@@ -115,9 +115,12 @@
                     
                 </div>
                 <div class="msgwall" > 
-                    <h4> msgwall </h4>
-                    <div id="message_container_home" class="message_container"> 
-                    </div>
+                    <form onsubmit="get_homedata(); return false;">
+                        <h4> msgwall </h4>
+                        <div id="message_container_home" class="message_container">  
+                        </div>
+                        <button type="submit" id="renewbtn" > Renew </button>  
+                    </form>
                 </div>
             </div>  
             <div id="browse_tab" class="tab_page">  

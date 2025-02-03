@@ -263,6 +263,9 @@ select {
 
 .msgwall {
     float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
     width: 250px;
     height: 250px;
     margin-left: 10px;
@@ -270,11 +273,12 @@ select {
 }
 
 .msgwall h4 {
+    display: flex;
+    justify-content: center;
     height: 20px;
     margin: 5px auto;
     text-align: center;    
 }
-
 
 
 #searchform {
@@ -315,11 +319,18 @@ select {
 }
 
 .message_container {
+    float: flex;
     width: 230px;
-    height: 210px; 
+    height: 180px; 
     overflow-y: auto;
     border: 1px solid black;
     margin: 2.5px auto;  
+}
+#renewbtn{
+    width: 230px;
+    height: 20px;
+    margin: 2.5px auto;  
+    background-color: #ffffff;
 }
 
 
