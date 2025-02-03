@@ -208,6 +208,13 @@ select {
     background-color: #ffffff;
 }
 
+.postmsg h4{
+    height: 5px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+
 .msgwall {
     float: left;
     width: 250px;
