@@ -177,10 +177,30 @@ select {
     background-color: #ffffff;
 }
 
+.person_info h4{
+    height: 5px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+.person_info label {
+    width: 340px;
+    text-align: left;
+    margin-top: 30px;
+    margin-left: 20px;
+    float: left;
+}
+
+.person_info p{
+    width: 340px;
+    margin-top: 30px;
+    float: right; 
+}
+
 .postmsg {
     float: left;
     width: 250px;
-    height: 100px;
+    height: 140px;
     margin-left: 10px;
     margin-bottom: 10px;
     text-align: left;    
@@ -190,7 +210,7 @@ select {
 .msgwall {
     float: left;
     width: 250px;
-    height: 290px;
+    height: 250px;
     margin-left: 10px;
     background-color: #ffffff;
 }
