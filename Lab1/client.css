@@ -16,6 +16,7 @@ body {
     height: 400px;
 }
 
+/* login */
 .login {
     float: left;
     width: 250px;
@@ -48,11 +49,11 @@ label {
 
 button {
     width: 60px;
-    /* margin: 5px auto; */
     float: right;
     clear: both;   
 }
 
+/* signUp */
 .signup {
     float: left;
     width: 250px;
@@ -90,6 +91,7 @@ select {
     float: left;    
 }
 
+/* tab */
 .tab_page {
     display: none;
 }
@@ -100,8 +102,6 @@ select {
 
 #tab_view {
     background-color: white;
-    /*margin-left: 100px;
-    margin-bottom: 10px;*/
     margin: 40px auto;
     width: 600px;
     height: 60px;
@@ -122,10 +122,10 @@ select {
     font-weight: bold;
 }
 
+/* account */
 #account_tab {
     text-align: center;
     background-color: white;    
-    /*margin-left: 200px;*/
     margin: 40px auto;
     width: 400px;
     height: 140px;    
@@ -164,6 +164,7 @@ select {
     width: 400px;
 }
 
+/* home */
 #home_tab{
     margin: 100px auto;
     gap: 10px;
@@ -192,12 +193,7 @@ select {
     float: left;
 }
 
-.person_info p{
-    width: 340px;
-    margin-top: 30px;
-    float: right; 
-}
-
+/* post area(home) */
 .postmsg {
     float: left;
     width: 250px;
@@ -222,6 +218,7 @@ select {
     margin-right: 2.5px;
 }
 
+ /* post area(browse)*/
 #post_msg_content_to_other{
     width: 245px;
     height: 55px;    
@@ -258,7 +255,7 @@ select {
     text-align: center;
 }
 
-
+/* msgwall container */
 .msgwall {
     float: left;
     display: flex;
@@ -278,7 +275,7 @@ select {
     text-align: center;    
 }
 
-
+/* search area(browse)*/
 #searchform {
     text-align: center;
     background-color: white;    
@@ -301,6 +298,7 @@ select {
     color: red;
 }
 
+/* searched poerson's info (browse) */
 #searchuserinfo {
     margin: 20px auto;
     gap: 10px;
@@ -316,6 +314,7 @@ select {
     display: block;
 }
 
+/* msg wall */
 .message_container {
     width: 230px;
     height: 180px; 
@@ -324,6 +323,7 @@ select {
     margin: 2.5px auto;  
 }
 
+/* button for renew */
 .renewbtn{
     width: 230px;
     height: 20px;
