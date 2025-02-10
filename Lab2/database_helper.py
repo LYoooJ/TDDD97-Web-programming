@@ -74,3 +74,11 @@ def save_message(fromemail, toemail, msg):
         return True
     except Exception as e:
         return False
+    
+def delete_logged_in_user(token):
+    try:
+        get_db().execute("delete from loggedInUsers where token = ?;", [token])
+        get_db().commit()
+        return True
+    except Exception as e:
+        return False    
