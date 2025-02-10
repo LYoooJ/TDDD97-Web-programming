@@ -25,6 +25,10 @@ def sign_up():
     if validate_email(data['email']) is False:
         return jsonify({"success": False, "message": "Wrong email"})
 
+    # Check password length
+    if len(data['password']) <8:
+        return jsonify({"success": False, "message": "password length"})
+    
     # Check if user already exist
     if database_helper.find_user_by_email(data['email']) is not None:
         return jsonify({"success": False, "message": "User already exists."})
