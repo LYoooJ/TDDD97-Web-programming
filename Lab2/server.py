@@ -40,6 +40,10 @@ def sign_up():
 def sign_in():
     data = request.get_json()
 
+    # Check validity of Data
+    if any(value == None or value == "" for value in data.values()):
+        return {"success": False, "message": "Form data missing"}
+    
     # Check if user with the email exists
     search_resp = database_helper.find_user_by_email(data['username'])
     if search_resp is not None:
@@ -55,13 +59,97 @@ def sign_in():
     else:
         return {"success": False, "message": "Wrong Email"}
 
-
-## Uncompleted
-@app.route('/change_password', methods = ['PATCH'])
+@app.route('/change_password', methods = ['PUT'])
 def change_password():
     data = request.get_json()
+    # Check validity of Data
+    if any(value == None or value == "" for value in data.values()):
+        return {"success": False, "message": "Form data missing"}
+    
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."}
+    
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp is not None:
+        search_resp = database_helper.find_user_by_email(email_resp[0])
+        if search_resp[1] == data['oldpassword']:
+            update_resp = database_helper.update_password(data['newpassword'], email_resp[0])
+            if update_resp:
+                return {"success": True, "message": "Password changed."}
+            else:
+                return {"success": False, "message": "Something wrong."}
+        else:
+            return {"success": False, "message": "Wrong password."} 
+    else:
+        return {"success": False, "message": "Invalid token."} 
 
-    search_resp =database_helper.find_user_by_email(data['username'])
+@app.route('/get_user_data_by_token', methods = ['GET'])
+def get_user_data_by_token():
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."}
+    
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp is not None:
+        search_resp = database_helper.find_user_by_email(email_resp[0])
+
+        ## Delete password from returned data
+        user_data = list(search_resp)
+        del user_data[1]
+        userdata = tuple(user_data)
+        return {"success": True, "message": "User data retrieved.", "data": userdata}
+    else:
+        return {"success": False, "message": "Invalid token."} 
+
+@app.route('/post_message', methods = ['POST'])
+def post_message():
+    data = request.get_json()
+    # Check validity of Data
+    if any(value == None or value == "" for value in data.values()):
+        return {"success": False, "message": "Form data missing"}
+    
+    # Get and check token
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."}
+
+    # Validate the email of  recipient.
+    resp = database_helper.find_user_by_email(data['email'])
+    if resp is None:
+        return {"success": False, "message": "No such user."}
+    
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp is not None:
+        database_helper.save_message(email_resp[0], data['email'], data['message'])
+        return {"success": True, "message": "Message posted"}
+    else:
+        return {"success": False, "message": "Invalid token."}
+    
+@app.route('/get_user_messages_by_token', methods = ['GET'])
+def get_user_messages_by_token():
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."}    
+
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp is not None:
+        search_resp = database_helper.find_messages_by_email(email_resp[0])
+        return {"success": True, "message": "User messages retrieved.", 'data': search_resp}
+    else:
+        return {"success": False, "message": "Invalid token."}    
+
+@app.route('/get_user_messages_by_email', methods = ['GET'])
+def get_user_messages_by_email():
+    data = request.get_json()
+    # Check validity of Data
+    if any(value == None or value == "" for value in data.values()):
+        return {"success": False, "message": "Form data missing"}
+
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."} 
+
 
 def generate_random_token():
     letters = string.ascii_letters + string.digits
@@ -72,24 +160,25 @@ def validate_email(email):
     pattern = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
     return pattern.match(email) != None
 
-
-
-
-
-
-## Uncompleted
-@app.route('/userinfo/find/<email>', methods = ['POST'])
+@app.route('/get_user_data_by_email/<email>', methods = ['GET'])
 def get_user_data_by_email(email):
-    if email is not None:
-        resp = database_helper.find_user_by_email(email)
-        return jsonify(resp), 200
+    token = request.headers.get('Authorization')
+    if token is None:
+        return {"success": False, "message": "token is required."}   
+    
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp is None:
+        return {"success": False, "message": "Invalid token."}
+    
+    search_resp = database_helper.find_user_by_email(email)
+    if search_resp is None:
+        return {"success": False, "message": "No such User."}
     else:
-        return "", 400
-
-## Uncompleted
-def get_user_data_by_token():
-    token = request.headers.get("Authorization")
-
+        ## Delete password from returned data
+        user_data = list(search_resp)
+        del user_data[1]
+        userdata = tuple(user_data)
+        return {"success": True, "message": "User data retrieved.", "data": userdata}
 
 if __name__ == '__main__':
     app.debug = True
