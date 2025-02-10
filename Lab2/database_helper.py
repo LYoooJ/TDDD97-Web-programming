@@ -16,21 +16,30 @@ def disconnect():
         g.db.close()
         g.db = None
 
-def create_contact(name, number):
+def create_user(email, password, firstName, familyName, gender, city, country):
     try:
-        get_db().execute("insert into contact values(?, ?);", [name, number]);
+        get_db().execute("insert into userinfo values(?, ?, ?, ?, ?, ?, ?);", [email, password, firstName, familyName, gender, city, country])
         get_db().commit()
         return True
-    except:
+    except Exception as e:
         return False
 
-def get_contact(name):
-    cursor = get_db().execute("select * from contact where name like ?;", [name])
-    matches = cursor.fetchall()
+def find_user_by_email(email) -> tuple:
+    cursor = get_db().execute("select * from userinfo where email = ?;", [email])
+    userdata = cursor.fetchone()
     cursor.close()
-
-    result = []
-    for index in range(len(matches)):
-        result.append({'name': matches[index][0], 'number': matches[index][1]})
+    return userdata
     
-    return result
+def save_token_info(email, token) -> None:
+    try:
+        get_db().execute("insert into loggedInUsers values(?, ?);", [email, token])
+        get_db().commit()
+        return True
+    except Exception as e:
+        return False
+
+def get_userdata_by_token(token):
+    cursor = get_db().execute("select * from loggedInUser where token = ?;", [token])
+    email = cursor.fetchone()
+    cursor.close()
+    return find_user_by_email(email)

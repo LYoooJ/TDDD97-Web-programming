@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
-
+import secrets
 import database_helper
+import string
+import re
 
 app = Flask(__name__)
 
@@ -12,30 +14,81 @@ def root():
 def teardown(exception):
     database_helper.disconnect()
 
-@app.route('/contact/create/', methods = ['POST'])
-def save_contact():
+@app.route('/sign_up', methods = ['POST'])
+def sign_up():
     data = request.get_json()
-    if 'name' in data and 'number' in data:
-        if len(data['name']) <= 120 and len(data['number']) <= 20:
-            resp = database_helper.create_contact(data['name'], data['number'])
-            if resp:
-                return "", 201
-            else:
-                return "", 409
-        else:
-            return '', 400
-    else:
-        return '', 400
+    # Check validity of Data
+    if any(value is None or value is "" for value in data.values()):
+        return {"success": False, "message": "Form data missing"}
 
-@app.route('/contact/find/<name>', methods = ['GET'])
-def query_contact(name):
-    if name is not None:
-        resp = database_helper.get_contact(name)
-        print(f"查詢結果: {resp}")
+    # Check validity of Email
+    if validate_email(data['email']) is False:
+        return {"success": False, "message": "Wrong email"}
+
+    # Check if user already exist
+    if database_helper.find_user_by_email(data['email']) is not None:
+        return {"success": False, "message": "User already exists."}
+    else:
+        resp = database_helper.create_user(data['email'], data['password'], data['firstname'], data['familyname'], data['gender'], data['city'], data['country'])
+        if resp:
+            return {"success": True, "message": "Successfully created a new user."}
+        else:
+            return {"success": False, "message": "Failed to create a new user."}
+
+
+@app.route('/sign_in', methods = ['POST'])
+def sign_in():
+    data = request.get_json()
+
+    # Check if user with the email exists
+    search_resp = database_helper.find_user_by_email(data['username'])
+    if search_resp is not None:
+        if search_resp[1] == data['password']:
+            token = generate_random_token()
+            resp = database_helper.save_token_info(data['username'], token)
+            if resp:
+                return {"success": True, "message": "Successfully signed in", "data": token}
+            else:
+                return {"success": False, "message": "Error"}
+        else:
+            return {"success": False, "message": "Wrong password"}
+    else:
+        return {"success": False, "message": "Wrong Email"}
+
+
+## Uncompleted
+@app.route('/change_password', methods = ['PATCH'])
+def change_password():
+    data = request.get_json()
+
+    search_resp =database_helper.find_user_by_email(data['username'])
+
+def generate_random_token():
+    letters = string.ascii_letters + string.digits
+    token = "".join(secrets.choice(letters) for _ in range(36))
+    return token
+
+def validate_email(email):
+    pattern = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+    return pattern.match(email) != None
+
+
+
+
+
+
+## Uncompleted
+@app.route('/userinfo/find/<email>', methods = ['POST'])
+def get_user_data_by_email(email):
+    if email is not None:
+        resp = database_helper.find_user_by_email(email)
         return jsonify(resp), 200
     else:
         return "", 400
-    
+
+## Uncompleted
+def get_user_data_by_token():
+    token = request.headers.get("Authorization")
 
 
 if __name__ == '__main__':
