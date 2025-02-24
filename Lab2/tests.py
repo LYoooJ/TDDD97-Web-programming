@@ -225,6 +225,7 @@ class FlaskAppTests(unittest.TestCase):
                     print(f"test_04_change_password correct password passed: ✅")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
+                print(f"HTTPError occurred: {e}")
                 print(f"test_04_change_password crashed: ❌")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
@@ -336,6 +337,7 @@ class FlaskAppTests(unittest.TestCase):
                     print(f"test_06_get_user_data_by_email non-existing email passed: ✅")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
+                print(f"HTTPError occurred: {e}")
                 print(f"test_06_get_user_data_by_email crashed: ❌")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
@@ -427,6 +429,7 @@ class FlaskAppTests(unittest.TestCase):
                     print(f"test_07_post_message main user post on wall passed: ✅")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
+                print(f"HTTPError occurred: {e}")
                 print(f"test_07_post_message crashed: ❌")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")
@@ -464,6 +467,7 @@ class FlaskAppTests(unittest.TestCase):
                     print(f"test_08_get_user_messages_by_token missing token passed: ✅")
             except requests.exceptions.HTTPError as e:
                 logging.warning(f"HTTPError occurred: {e}")
+                print(f"HTTPError occurred: {e}")
                 print(f"test_08_get_user_messages_by_token crashed: ❌")
             except requests.exceptions.RequestException as e:
                 self.fail(f"RequestException occurred: {e}")

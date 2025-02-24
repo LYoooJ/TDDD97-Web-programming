@@ -21,23 +21,41 @@ if (token) {
 document.getElementById("view").innerHTML += nowview.innerHTML;
 
 //only reload one time
-if(first_time){
+if(token && first_time){
     get_homedata();
     first_time =  false;
 }
-// window.alert("Hello TDDD97!");
 };
 
-// function make_request(method, url, async, data){
-//     var xhr = new XMLHttpRequest();
-//     xhr.open(method, url, async);
-//     xhr.onreadystatechange = function() {
-//         if ()
-//     }
+function get_homedata(){
+    console.log("get_homedata executed!");
+    let token = localStorage.getItem("token");
 
-//     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-//     xhr.send(JSON.stringify(data));
-// }
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/get_user_data_by_token', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            console.log(return_info);
+            if (return_info.success) {
+                console.log(return_info.data);
+                document.getElementById("email_info").innerText = return_info.data[0];
+                document.getElementById("firstname_info").innerText = return_info.data[1];
+                document.getElementById("familyname_info").innerText = return_info.data[2];
+                document.getElementById("gender_info").innerText = return_info.data[3];
+                document.getElementById("city_info").innerText = return_info.data[4];
+                document.getElementById("country_info").innerText = return_info.data[5];
+
+                loadMessage("message_container_home", return_info.data[0]);
+            }
+        }
+    }
+}
+
 function signUp(form){
     let profile = {
         'email' : form.email_signup.value,
@@ -53,9 +71,43 @@ function signUp(form){
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
     xhr.send(JSON.stringify(profile));
 
-    xhr.onreadystatechange() = function() {
-        if (xhr.readyState == DONE) {
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
+            if (return_info.success) {
+                nowview = document.getElementById("profileview");                
+            }   
+            else {
+                nowview = document.getElementById("welcomeview");
+            }
+
+            sign_in(form.email_signup.value, form.password_signup.value);
+            document.getElementById("view").innerHTML = nowview.innerHTML;
+            get_homedata();
+
+            let errorMessageElement = document.getElementById("error_message");
+            if (errorMessageElement) {
+                errorMessageElement.textContent = return_info.message;
+            }
+        }
+    }
+}
+
+function sign_in(email, password) {
+    let login = {
+        'username' : email,
+        'password' : password,
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/sign_in', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.send(JSON.stringify(login));
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            console.log(return_info);
             if (return_info.success) {
                 localStorage.setItem("token", return_info.data);
                 nowview = document.getElementById("profileview");                
@@ -65,96 +117,44 @@ function signUp(form){
             }
             document.getElementById("view").innerHTML = nowview.innerHTML;
             get_homedata();
-        }
-    }
 
-    let errorMessageElement = document.getElementById("error_message");
-    if (errorMessageElement) {
-        errorMessageElement.textContent = return_info.message;
-    }
-    
-    // let profile = {
-    //     email : form.email_signup.value,
-    //     password : form.password_signup.value,
-    //     firstname : form.firstname.value,
-    //     familyname :form.familyname.value,
-    //     gender :form.gender.value,
-    //     city :form.city.value,
-    //     country :form.country.value,
-    // }
-    // let return_info =serverstub.signUp(profile);
-
-    // if(return_info.success.valueOf()){
-    //     let return_info =serverstub.signIn(profile.email, profile.password);
-    //     if (return_info.success.valueOf()) {
-    //         localStorage.setItem("token", return_info.data.valueOf());
-    //         nowview = document.getElementById("profileview");
-    //     }
-    //     else {
-    //         nowview = document.getElementById("welcomeview");
-    //     }
-    // }else{
-    //     nowview = document.getElementById("welcomeview");
-    // }
-    // document.getElementById("view").innerHTML = nowview.innerHTML;
-    // get_homedata();
-
-    // let errorMessageElement = document.getElementById("error_message");
-    // if (errorMessageElement) {
-    //     errorMessageElement.textContent = return_info.message;
-    // }
-}
-
-function login_validate(form){
-    let login = {
-        'email' : form.email.value,
-        'password' : form.password.value,
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/sign_in', true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
-    xhr.send(JSON.stringify(login));
-    
-    xhr.onreadystatechange() = function() {
-        if (xhr.readyState == DONE) {
-            let return_info = JSON.parse(xhr.responseText);
-            if (return_info.success) {
-                localStorage.setItem("token", return_info.data.valueOf());
-                nowview = document.getElementById("profileview");                
-            }   
-            else {
-                nowview = document.getElementById("welcomeview");
-            }
-            document.getElementById("view").innerHTML = nowview.innerHTML;
-            get_homedata();
-        }
-    }
-    let errorMessageElement = document.getElementById("login_error_message");
-    if (errorMessageElement) {
-        errorMessageElement.textContent = return_info.message;
-    }
-}
-
-function signout_validate() {
-    try {
-    let token = localStorage.getItem("token");
-    let return_info = serverstub.signOut(token);
-
-        if (return_info.success) {
-            localStorage.removeItem("token");
-            nowview = document.getElementById("welcomeview");
-            document.getElementById("view").innerHTML = nowview.innerHTML;
-        }
-        else {
-            let errorMessageElement = document.getElementById("signout_error");
+            let errorMessageElement = document.getElementById("login_error_message");
             if (errorMessageElement) {
                 errorMessageElement.textContent = return_info.message;
             }
         }
     }
-    catch(e) {
-        console.error("error");
-    }
+}
+
+function login_validate(form){
+    sign_in(form.email.value, form.password.value);
+}
+
+function signout_validate() {
+    let token = localStorage.getItem("token");
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('DELETE', '/sign_out', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            if (return_info.success) {
+                localStorage.removeItem("token");
+                nowview = document.getElementById("welcomeview");
+                document.getElementById("view").innerHTML = nowview.innerHTML;            
+            }   
+            else {
+                let errorMessageElement = document.getElementById("signout_error");
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = return_info.message;
+                }
+            }
+        }
+    }    
 }
 
 function tryChangePassword(form) {
@@ -174,18 +174,22 @@ function tryChangePassword(form) {
         return false;
     }
 
-    let return_info = serverstub.changePassword(token, currentPsw, newPsw);
-    errorMsg.textContent = return_info.message;
-    if (!return_info.success.valueOf()) {
-        return false;
-    } else {
-        return true;
+    let data = {
+        'oldpassword': currentPsw,
+        'newpassword': newPsw
     }
-}
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', '/change_password', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send(JSON.stringify(data));
 
-function getToken() {
-    let token = localStorage.getItem("token");
-    return token;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            errorMsg.textContent = return_info.message;
+        }
+    }
 }
 
 function matchPassword(psw, rePsw) {
@@ -227,44 +231,42 @@ function trySearchUser(form) {
     let errorMsg = document.getElementById("search_error");
     let messageContainer = document.getElementById("message_container");
     messageContainer.innerHTML = "";
-    let return_info = serverstub.getUserDataByEmail(token, searchEmail);
-    if (return_info.success.valueOf()) {
-        document.getElementById("search_email_info").innerText = return_info.data.email;
-        document.getElementById("search_firstname_info").innerText = return_info.data.firstname;
-        document.getElementById("search_familyname_info").innerText = return_info.data.familyname;
-        document.getElementById("search_gender_info").innerText = return_info.data.gender;
-        document.getElementById("search_city_info").innerText = return_info.data.city;
-        document.getElementById("search_country_info").innerText = return_info.data.country;
 
-        loadMessage("message_container", return_info.data.email);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/get_user_data_by_email/' + encodeURIComponent(searchEmail), true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send();
 
-        let searchUserInfo = document.getElementById("searchuserinfo");
-        if (!searchUserInfo.classList.contains("on")) {
-            searchUserInfo.classList.add("on");
-        }
-    } else {
-        errorMsg.textContent = return_info.message;
-        let searchUserInfo = document.getElementById("searchuserinfo");
-        if (searchUserInfo.classList.contains("on")) {
-            searchUserInfo.classList.remove("on");
-        }        
-        return false;
-    }
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            if (return_info.success) {
+                document.getElementById("search_email_info").innerText = return_info.data[0];
+                document.getElementById("search_firstname_info").innerText = return_info.data[1]
+                document.getElementById("search_familyname_info").innerText = return_info.data[2];
+                document.getElementById("search_gender_info").innerText = return_info.data[3];
+                document.getElementById("search_city_info").innerText = return_info.data[4];
+                document.getElementById("search_country_info").innerText = return_info.data[5];
+            
+                loadMessage("message_container", return_info.data[0]);
+    
+                let searchUserInfo = document.getElementById("searchuserinfo");
+                if (!searchUserInfo.classList.contains("on")) {
+                    searchUserInfo.classList.add("on");
+                }
+            } else {
+                errorMsg.textContent = return_info.message;
+                let searchUserInfo = document.getElementById("searchuserinfo");
+                if (searchUserInfo.classList.contains("on")) {
+                    searchUserInfo.classList.remove("on");
+                }        
+                return false;            
+            }
+        } 
+    }   
     errorMsg.textContent = "";
     return true;
-}
-
-function get_homedata(){
-    let token = localStorage.getItem("token");
-    homedata = serverstub.getUserDataByToken(token);
-    document.getElementById("email_info").innerText = homedata.data.email;
-    document.getElementById("firstname_info").innerText = homedata.data.firstname;
-    document.getElementById("familyname_info").innerText = homedata.data.familyname;
-    document.getElementById("gender_info").innerText = homedata.data.gender;
-    document.getElementById("city_info").innerText = homedata.data.city;
-    document.getElementById("country_info").innerText = homedata.data.country;
-
-    loadMessage("message_container_home", homedata.data.email);
 }
 
 function msgRenew(tabId) {
@@ -300,34 +302,107 @@ function openTab(tabId) {
 }
 
 function tryPostMessage(form){
-    let text = form.post_msg_content.value;
-    let token = localStorage.getItem("token");
-    let return_info =serverstub.postMessage(token, text, null);
-    let errorMessageElement = document.getElementById("post_error_message");
-    errorMessageElement.textContent = return_info.message;
-    form.post_msg_content.value = "";
+    try{
+        let text = form.post_msg_content.value;
+        let token = localStorage.getItem("token");
+        let email = document.getElementById('email_info').textContent;
+        let errorMessageElement = document.getElementById("post_error_message");
+    
+        let post = {
+            'email': email,
+            'message': text,
+        }
+        console.log(post);
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/post_message', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+        xhr.setRequestHeader("Authorization", token);
+        xhr.send(JSON.stringify(post));   
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == xhr.DONE) {
+                let return_info = JSON.parse(xhr.responseText);
+                console.log(return_info.message);
+                if (xhr.status === 201) {
+                    errorMessageElement.textContent = "Message Posted";
+                } else if(xhr.status === 401) {
+                    errorMessageElement.textContent = "You are not signed in";
+                } else {
+                    errorMessageElement.textContent = "No such User";
+                }
+            }
+        }    
+        form.post_msg_content.value = "";
+    }
+    catch(e) {
+        console.log(e);
+    }
 }
 
 function tryPostMessageToOther(form) {
-    let text = form.post_msg_content_to_other.value;
-    let token = localStorage.getItem("token");
-    let email = document.getElementById("search_email_info").textContent;
-    let return_info = serverstub.postMessage(token, text, email);
-    let errorMessageElement = document.getElementById("post_error_message_to_other");
-    errorMessageElement.textContent = return_info.message;
-    form.post_msg_content_to_other.value = "";
+    try{
+        let text = form.post_msg_content_to_other.value;
+        let token = localStorage.getItem("token");
+        let errorMessageElement = document.getElementById("post_error_message_to_other");
+        let email = document.getElementById("search_email_info").textContent;
+    
+        let post = {
+            "email": email,
+            "message": text
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/post_message', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+        xhr.setRequestHeader("Authorization", token);
+        xhr.send(JSON.stringify(post));  
+    
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == xhr.DONE) {
+                console.log(xhr.responseText);
+                console.log(xhr.response);
+                let return_info = JSON.parse(xhr.responseText);
+                console.log(return_info);
+                console.log(xhr.status);
+                if (xhr.status === 201) {
+                    errorMessageElement.textContent = "Message Posted";
+                } else if(xhr.status === 401) {
+                    errorMessageElement.textContent = "You are not signed in";
+                } else {
+                    errorMessageElement.textContent = "No such User";
+                }
+            }
+        }    
+        form.post_msg_content_to_other.value = "";
+    }
+    catch(e) {
+        console.log(e);
+    }
 }
 
 function loadMessage(message_container, email) {
     let messageContainer = document.getElementById(message_container);
     let token = localStorage.getItem("token");
-    let return_info = serverstub.getUserMessagesByEmail(token, email);
-    messageContainer.innerHTML = [];
 
-    if (return_info.data) {
-        return_info.data.forEach(e => {
-            let newMsg = '<div>' + e.writer + ': ' + e.content + '</div>';
-            messageContainer.innerHTML += newMsg;
-        });
-    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/get_user_messages_by_email/' + email, true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send();  
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === xhr.DONE) {
+            let return_info = JSON.parse(xhr.responseText);
+            console.log(return_info);
+            messageContainer.innerHTML = [];
+            console.log(return_info.data);
+            if (return_info.data) {
+                return_info.data.forEach(e => {
+                    let newMsg = '<div>' + e[0] + ': ' + e[2] + '</div>';
+                    messageContainer.innerHTML += newMsg;
+                });
+            }
+        }
+    }         
 }
