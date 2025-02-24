@@ -1,0 +1,340 @@
+body {
+    background-color: #7898cc;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.container {
+    margin: 100px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;
+}
+
+.slogan {
+    float: left;
+    width: 340px;
+    height: 400px;
+}
+
+/* login */
+.login {
+    float: left;
+    width: 250px;
+    height: 100px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    text-align: left;    
+    background-color: #ffffff;
+}
+
+.login input {
+    width: 150px;
+    margin: 2.5px auto;
+    float: right;
+}
+
+label {
+    width: 100px;
+    text-align: left;
+    margin: 2.5px auto;
+    float: left;
+}
+
+#login_error_message{
+    color: red;
+    width: 180px;
+    text-align: left;
+    float: left;    
+}
+
+button {
+    width: 60px;
+    float: right;
+    clear: both;   
+}
+
+/* signUp */
+.signup {
+    float: left;
+    width: 250px;
+    height: 290px;
+    margin-left: 10px;
+    background-color: #ffffff;
+}
+
+.signup h4 {
+    height: 10px;
+    text-align: center;
+}
+
+.signup input {
+    width: 150px;
+    margin: 2.5px auto;
+    float: right; 
+}
+
+.form_group {
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+}
+
+select {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#error_message{
+    color: red;
+    width: 180px;
+    text-align: left;
+    float: left;    
+}
+
+/* tab */
+.tab_page {
+    display: none;
+}
+
+.tab_page.on {
+    display: block;
+}
+
+#tab_view {
+    background-color: white;
+    margin: 40px auto;
+    width: 600px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tab_button {
+    background-color: white;
+    width: 200px;
+    height: 60px;
+    text-align: center;  
+}
+
+.tab_button.on {
+    background-color: rgb(185, 182, 182);   
+    font-weight: bold;
+}
+
+/* account */
+#account_tab {
+    text-align: center;
+    background-color: white;    
+    margin: 40px auto;
+    width: 400px;
+    height: 140px;    
+}
+
+#account_tab label {
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+#account_tab input {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#changepsw_error {
+    color: red;
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+.btnspace {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#signoutbtn {
+    color: white;
+    background-color: dimgray;
+    width: 400px;
+}
+
+#signout_error {
+    color: red;
+    text-align: center;
+    width: 400px;
+}
+
+/* home */
+#home_tab{
+    margin: 100px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;
+}
+
+.person_info {
+    float: left;
+    width: 340px;
+    height: 400px;
+    background-color: #ffffff;
+}
+
+.person_info h4{
+    height: 5px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+.person_info p {
+    width: 340px;
+    text-align: left;
+    margin-top: 30px;
+    margin-left: 20px;
+    float: left;
+}
+
+/* post area(home) */
+.postmsg {
+    float: left;
+    width: 250px;
+    height: 140px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    text-align: left;    
+    background-color: #ffffff;
+}
+
+.postmsg h4{
+    height: 5px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+#post_msg_content{
+    width: 245px;
+    height: 55px;    
+    margin-top: 20px ;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+
+ /* post area(browse)*/
+#post_msg_content_to_other{
+    width: 245px;
+    height: 55px;    
+    margin-top: 20px ;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+}
+
+#postmsgbtn_to_other{
+    width: 250px;
+    height: 20px; 
+    margin: 5px auto;
+    text-align: center;
+}
+
+#post_error_message{
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;
+}
+
+#post_error_message_to_other {
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;    
+}
+
+#postmsgbtn{
+    width: 250px;
+    height: 20px;   
+    margin: 5px auto;
+    text-align: center;
+}
+
+/* msgwall container */
+.msgwall {
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 250px;
+    height: 250px;
+    margin-left: 10px;
+    background-color: #ffffff;
+}
+
+.msgwall h4 {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    margin: 5px auto;
+    text-align: center;    
+}
+
+/* search area(browse)*/
+#searchform {
+    text-align: center;
+    background-color: white;    
+    margin: 40px auto;
+    width: 250px;
+    height: 110px;    
+}
+
+#searchuser label {
+    width: 200px;
+    margin: 2.5px auto;
+}
+
+#useremail {
+    width: 150px;
+    margin: 2.5px auto;
+}
+
+#search_error {
+    color: red;
+}
+
+/* searched poerson's info (browse) */
+#searchuserinfo {
+    margin: 20px auto;
+    gap: 10px;
+    width: 600px;
+    height: 400px;  
+}
+
+.searchinfo {
+    display: none;
+}
+
+.searchinfo.on {
+    display: block;
+}
+
+/* msg wall */
+.message_container {
+    width: 230px;
+    height: 180px; 
+    overflow-y: auto;
+    border: 1px solid black;
+    margin: 2.5px auto;  
+}
+
+/* button for renew */
+.renewbtn{
+    width: 230px;
+    height: 20px;
+    margin: 2.5px auto;  
+    background-color: #ffffff;
+}
+
+
+#post_error_message{
+    color: red;
+    width: 250px;
+    text-align: left;
+    margin: 1px auto;
+}
