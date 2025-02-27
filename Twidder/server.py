@@ -3,12 +3,39 @@ import secrets
 import database_helper
 import string
 import re
+from flask_sock import Sock
 
 app = Flask(__name__, static_folder='static')
+# sock = Sock(app)
+
+# logged_in_users = {}
 
 @app.route("/", methods = ['GET'])
 def root():
     return app.send_static_file('client.html')
+
+# @sock.route('/connect')
+# def connect_user(ws):
+#     token = ws.receive()
+#     email_resp = database_helper.get_user_email_by_token(token)
+    
+#     check_and_logout_user(email_resp)
+#     if email_resp != None:
+#         logged_in_users[email_resp] = ws
+
+# @sock.route('/logout')
+# def check_and_logout_user(email):
+#     if email in logged_in_users:
+#         socket = logged_in_users[email]
+#         socket.send("user logout")
+#         socket.close()
+#         del logged_in_users[email]
+
+# @sock.route('/echo')
+# def echo_socket(ws):
+#     while True:
+#         message = ws.receive()
+#         ws.send(message)
 
 @app.teardown_request
 def teardown(exception):
@@ -18,7 +45,7 @@ def teardown(exception):
 def sign_up():
     data = request.get_json()
     # Check validity of Data
-    if any(value is None or value is "" for value in data.values()):
+    if any(value == None or value == "" for value in data.values()):
         return jsonify({"success": False, "message": "Form data missing"})
 
     # Check validity of Email
@@ -30,7 +57,7 @@ def sign_up():
         return jsonify({"success": False, "message": "password length"})
     
     # Check if user already exist
-    if database_helper.find_user_by_email(data['email']) is not None:
+    if database_helper.find_user_by_email(data['email']) != None:
         return jsonify({"success": False, "message": "User already exists."})
     else:
         resp = database_helper.create_user(data['email'], data['password'], data['firstname'], data['familyname'], data['gender'], data['city'], data['country'])
@@ -50,7 +77,7 @@ def sign_in():
     
     # Check if user with the email exists
     search_resp = database_helper.find_user_by_email(data['username'])
-    if search_resp is not None:
+    if search_resp != None:
         if search_resp[1] == data['password']:
             token = generate_random_token()
             resp = database_helper.save_token_info(data['username'], token)
@@ -72,11 +99,11 @@ def change_password():
         return jsonify({"success": False, "message": "Form data missing"})
     
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})
     
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is not None:
+    if email_resp != None:
         search_resp = database_helper.find_user_by_email(email_resp[0])
         if search_resp[1] == data['oldpassword']:
             update_resp = database_helper.update_password(data['newpassword'], email_resp[0])
@@ -93,11 +120,11 @@ def change_password():
 @app.route('/get_user_data_by_token', methods = ['GET'])
 def get_user_data_by_token():
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})
     
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is not None:
+    if email_resp != None:
         search_resp = database_helper.find_user_by_email(email_resp[0])
 
         ## Delete password from returned data
@@ -114,34 +141,34 @@ def post_message():
     data = request.get_json()
     # Check validity of Data
     if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"})
+        return jsonify({"success": False, "message": "Form data missing"}), 400
     
     # Get and check token
     token = request.headers.get('Authorization')
-    if token is None:
-        return jsonify({"success": False, "message": "token is required."})
+    if token == None:
+        return jsonify({"success": False, "message": "token is required."}), 401
 
     # Validate the email of  recipient.
     resp = database_helper.find_user_by_email(data['email'])
-    if resp is None:
-        return jsonify({"success": False, "message": "No such user."})
+    if resp == None:
+        return jsonify({"success": False, "message": "No such user."}), 400
     
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is not None:
+    if email_resp != None:
         database_helper.save_message(email_resp[0], data['email'], data['message'])
-        return jsonify({"success": True, "message": "Message posted"})
+        return jsonify({"success": True, "message": "Message posted"}), 201
     else:
-        return jsonify({"success": False, "message": "Invalid token."})
+        return jsonify({"success": False, "message": "Invalid token."}), 401
     
 
 @app.route('/get_user_messages_by_token', methods = ['GET'])
 def get_user_messages_by_token():
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})  
 
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is not None:
+    if email_resp != None:
         search_resp = database_helper.find_messages_by_email(email_resp[0])
         return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp})
     else:
@@ -161,15 +188,15 @@ def validate_email(email):
 @app.route('/get_user_data_by_email/<email>', methods = ['GET'])
 def get_user_data_by_email(email):
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})  
     
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is None:
+    if email_resp == None:
         return jsonify({"success": False, "message": "Invalid token."})
     
     search_resp = database_helper.find_user_by_email(email)
-    if search_resp is None:
+    if search_resp == None:
         return jsonify({"success": False, "message": "No such User."})
     else:
         ## Delete password from returned data
@@ -181,22 +208,22 @@ def get_user_data_by_email(email):
 
 @app.route('/get_user_messages_by_email/<email>', methods = ['GET'])
 def get_user_message_by_email(email):
-    if email is None:
+    if email == None:
         return jsonify({"success": False, "message": "Missing Email."}) 
     
-    if database_helper.find_user_by_email(email) is None:
+    if database_helper.find_user_by_email(email) == None:
         return jsonify({"success": False, "message": "Wrong email."})
     
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})
     
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is None:
+    if email_resp == None:
         return jsonify({"success": False, "message": "Invalid token."})
     
     search_resp = database_helper.find_messages_by_email(email)
-    if search_resp is None:
+    if search_resp == None:
         return jsonify({"success": False, "message": "No such User."})
     else:
         return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp})
@@ -205,11 +232,11 @@ def get_user_message_by_email(email):
 @app.route('/sign_out', methods = ['DELETE'])
 def sign_out():
     token = request.headers.get('Authorization')
-    if token is None:
+    if token == None:
         return jsonify({"success": False, "message": "token is required."})
 
     email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp is None:
+    if email_resp == None:
         return jsonify({"success": False, "message": "Invalid token."})
     else:
         if database_helper.delete_logged_in_user(token):
@@ -218,6 +245,6 @@ def sign_out():
             return jsonify({"success": False, "message": "Something wrong."})
 
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run()
+# if __name__ == '__main__':
+#     app.debug = True
+#     app.run()

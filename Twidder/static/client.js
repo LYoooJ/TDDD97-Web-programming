@@ -1,7 +1,14 @@
-
-
 displayView = function(){
     // the code required to display a view
+    let token = localStorage.getItem("token");
+    let nowview;
+    //change view depending on token
+    if (token) {
+        nowview = document.getElementById("profileview");
+    } else {
+        nowview = document.getElementById("welcomeview");
+    }
+    document.getElementById("view").innerHTML += nowview.innerHTML;
 };
 
 let first_time = true;
@@ -26,6 +33,24 @@ if(token && first_time){
     first_time =  false;
 }
 };
+
+function start_socket() {
+    let socket = new WebSocket("wss://" + location.host + "/connect")
+
+    socket.onopen = function(event) {
+        token = localStorage.getItem('token');
+        if (token) {
+            socket.send(token);
+        }
+    }
+
+    socket.onmessage = function(event) {
+        if (event.data == 'user logout') {
+            localStorage.removeItem('token');
+            displayView();
+        }
+    }
+}
 
 function get_homedata(){
     console.log("get_homedata executed!");
@@ -57,72 +82,85 @@ function get_homedata(){
 }
 
 function signUp(form){
-    let profile = {
-        'email' : form.email_signup.value,
-        'password' : form.password_signup.value,
-        'firstname' : form.firstname.value,
-        'familyname' :form.familyname.value,
-        'gender' :form.gender.value,
-        'city' :form.city.value,
-        'country' :form.country.value,
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/sign_up', true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
-    xhr.send(JSON.stringify(profile));
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == xhr.DONE) {
-            let return_info = JSON.parse(xhr.responseText);
-            if (return_info.success) {
-                nowview = document.getElementById("profileview");                
-            }   
-            else {
-                nowview = document.getElementById("welcomeview");
-            }
-
-            sign_in(form.email_signup.value, form.password_signup.value);
-            document.getElementById("view").innerHTML = nowview.innerHTML;
-            get_homedata();
-
-            let errorMessageElement = document.getElementById("error_message");
-            if (errorMessageElement) {
-                errorMessageElement.textContent = return_info.message;
+    try {
+        let profile = {
+            'email' : form.email_signup.value,
+            'password' : form.password_signup.value,
+            'firstname' : form.firstname.value,
+            'familyname' :form.familyname.value,
+            'gender' :form.gender.value,
+            'city' :form.city.value,
+            'country' :form.country.value,
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/sign_up', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+        xhr.send(JSON.stringify(profile));
+    
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == xhr.DONE) {
+                let return_info = JSON.parse(xhr.responseText);
+                if (return_info.success) {
+                    nowview = document.getElementById("profileview");                
+                }   
+                else {
+                    nowview = document.getElementById("welcomeview");
+                }
+    
+                sign_in(form.email_signup.value, form.password_signup.value);
+                document.getElementById("view").innerHTML = nowview.innerHTML;
+                get_homedata();
+    
+                let errorMessageElement = document.getElementById("error_message");
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = return_info.message;
+                }
             }
         }
     }
+    catch(e) {
+        console.log(e);
+    }
+
 }
 
 function sign_in(email, password) {
-    let login = {
-        'username' : email,
-        'password' : password,
-    }
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/sign_in', true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
-    xhr.send(JSON.stringify(login));
+    try {
+        let login = {
+            'username' : email,
+            'password' : password,
+        }
     
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == xhr.DONE) {
-            let return_info = JSON.parse(xhr.responseText);
-            console.log(return_info);
-            if (return_info.success) {
-                localStorage.setItem("token", return_info.data);
-                nowview = document.getElementById("profileview");                
-            }   
-            else {
-                nowview = document.getElementById("welcomeview");
-            }
-            document.getElementById("view").innerHTML = nowview.innerHTML;
-            get_homedata();
-
-            let errorMessageElement = document.getElementById("login_error_message");
-            if (errorMessageElement) {
-                errorMessageElement.textContent = return_info.message;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/sign_in', true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+        xhr.send(JSON.stringify(login));
+        //start_socket();
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == xhr.DONE) {
+                let return_info = JSON.parse(xhr.responseText);
+                console.log(return_info);
+                if (return_info.success) {
+                    localStorage.setItem("token", return_info.data);
+                    nowview = document.getElementById("profileview");                
+                }   
+                else {
+                    nowview = document.getElementById("welcomeview");
+                }
+                document.getElementById("view").innerHTML = nowview.innerHTML;
+                if (return_info.success)
+                    get_homedata();
+    
+                let errorMessageElement = document.getElementById("login_error_message");
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = return_info.message;
+                }
             }
         }
+    }
+    catch(e) {
+        console.log(e);
     }
 }
 
