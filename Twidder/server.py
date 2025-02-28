@@ -20,20 +20,31 @@ def connect_user(ws):
     token = ws.receive()
     #print(token)
     email_resp = database_helper.get_user_email_by_token(token)
-    
-    # check_and_logout_user(email_resp)
-    #print("email: ", email_resp)
     if email_resp != None:
-        logged_in_users[email_resp] = ws
-        #print(logged_in_users)
+        check_and_logout_user(email_resp[0])
+        logged_in_users[email_resp[0]] = ws
 
-# @sock.route('/logout')
-# def check_and_logout_user(email):
-#     if email in logged_in_users:
-#         socket = logged_in_users[email]
-#         socket.send("user logout")
-#         socket.close()
-#         del logged_in_users[email]
+    while True:
+        message = ws.receive()
+        if message is None:  # 클라이언트가 연결을 닫은 경우
+            print("❌ WebSocket closed by client (message=None)")
+            break
+        print(f"📩 Received message: {message}")
+
+def check_and_logout_user(email):
+    print("Check_and_logout_user executed!")
+
+    if email in logged_in_users:
+        try:
+            print("email in logged_in_users")
+            socket = logged_in_users[email]
+            socket.send("user logout")
+            # socket.close()
+            del logged_in_users[email]
+            # database_helper.delete_logged_in_user(email)
+        except Exception as e:
+            print("Exception!: ", e)
+        
 
 @sock.route('/echo')
 def echo_socket(ws):

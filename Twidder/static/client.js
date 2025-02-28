@@ -8,7 +8,7 @@ displayView = function(){
     } else {
         nowview = document.getElementById("welcomeview");
     }
-    document.getElementById("view").innerHTML += nowview.innerHTML;
+    document.getElementById("view").innerHTML = nowview.innerHTML;
 };
 
 let first_time = true;
@@ -25,7 +25,7 @@ if (token) {
 } else {
     nowview = document.getElementById("welcomeview");
 }
-document.getElementById("view").innerHTML += nowview.innerHTML;
+document.getElementById("view").innerHTML = nowview.innerHTML;
 
 //only reload one time
 if(token && first_time){
@@ -40,19 +40,24 @@ function start_socket() {
     socket.onopen = function(event) {
         console.log("Websocket connection");
         token = localStorage.getItem('token');
-        print(token)
         if (token) {
             socket.send(token);
         }
     }
 
     socket.onmessage = function(event) {
+        console.log("Event!!");
+        console.log(event.data);
         if (event.data == 'user logout') {
             console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
         }
     }
+
+    socket.onclose = function(event) {
+        console.log(`❌ WebSocket closed: Code ${event.code}, Reason: "${event.reason}", WasClean: ${event.wasClean}`);
+    };
 }
 
 function get_homedata(){

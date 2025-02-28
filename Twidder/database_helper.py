@@ -32,10 +32,12 @@ def find_user_by_email(email) -> tuple:
     
 def save_token_info(email, token) -> None:
     try:
-        get_db().execute("insert into loggedInUsers values(?, ?);", [email, token])
+        print("save token info Executed!")
+        get_db().execute("insert or replace into loggedInUsers values(?, ?);", [email, token])
         get_db().commit()
         return True
     except Exception as e:
+        print(e)
         return False
 
 def get_user_email_by_token(token):
@@ -77,6 +79,7 @@ def save_message(fromemail, toemail, msg):
     
 def delete_logged_in_user(token):
     try:
+        print("delete_logged_in_user executed! ")
         get_db().execute("delete from loggedInUsers where token = ?;", [token])
         get_db().commit()
         return True
