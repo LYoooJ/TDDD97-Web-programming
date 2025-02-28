@@ -38,7 +38,7 @@ function start_socket() {
     let socket = new WebSocket("ws://" + location.host + "/connect")
 
     socket.onopen = function(event) {
-        console.log("Websocket connection");
+        // console.log("Websocket connection");
         token = localStorage.getItem('token');
         if (token) {
             socket.send(token);
@@ -46,22 +46,21 @@ function start_socket() {
     }
 
     socket.onmessage = function(event) {
-        console.log("Event!!");
-        console.log(event.data);
+        // console.log("Event!!");
+        // console.log(event.data);
         if (event.data == 'user logout') {
-            console.log("Log out!!!!!");
+            // console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
         }
     }
 
     socket.onclose = function(event) {
-        console.log(`❌ WebSocket closed: Code ${event.code}, Reason: "${event.reason}", WasClean: ${event.wasClean}`);
+        console.log("Websocket connection closed! ");
     };
 }
 
 function get_homedata(){
-    console.log("get_homedata executed!");
     let token = localStorage.getItem("token");
 
     var xhr = new XMLHttpRequest();
@@ -73,9 +72,7 @@ function get_homedata(){
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            console.log(return_info);
             if (return_info.success) {
-                console.log(return_info.data);
                 document.getElementById("email_info").innerText = return_info.data[0];
                 document.getElementById("firstname_info").innerText = return_info.data[1];
                 document.getElementById("familyname_info").innerText = return_info.data[2];
@@ -147,7 +144,6 @@ function sign_in(email, password) {
         xhr.onreadystatechange = function() {
             if (xhr.readyState == xhr.DONE) {
                 let return_info = JSON.parse(xhr.responseText);
-                console.log(return_info);
                 if (return_info.success) {
                     localStorage.setItem("token", return_info.data);
                     nowview = document.getElementById("profileview");    
@@ -358,7 +354,6 @@ function tryPostMessage(form){
             'email': email,
             'message': text,
         }
-        console.log(post);
     
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/post_message', true);
@@ -369,7 +364,6 @@ function tryPostMessage(form){
         xhr.onreadystatechange = function() {
             if (xhr.readyState == xhr.DONE) {
                 let return_info = JSON.parse(xhr.responseText);
-                console.log(return_info.message);
                 if (xhr.status === 201) {
                     errorMessageElement.textContent = "Message Posted";
                 } else if(xhr.status === 401) {
@@ -406,11 +400,7 @@ function tryPostMessageToOther(form) {
     
         xhr.onreadystatechange = function() {
             if (xhr.readyState == xhr.DONE) {
-                console.log(xhr.responseText);
-                console.log(xhr.response);
                 let return_info = JSON.parse(xhr.responseText);
-                console.log(return_info);
-                console.log(xhr.status);
                 if (xhr.status === 201) {
                     errorMessageElement.textContent = "Message Posted";
                 } else if(xhr.status === 401) {
@@ -440,9 +430,7 @@ function loadMessage(message_container, email) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState === xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            console.log(return_info);
             messageContainer.innerHTML = [];
-            console.log(return_info.data);
             if (return_info.data) {
                 return_info.data.forEach(e => {
                     let newMsg = '<div>' + e[0] + ': ' + e[2] + '</div>';
