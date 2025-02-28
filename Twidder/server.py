@@ -22,9 +22,13 @@ def connect_user(ws):
         check_and_logout_user(email_resp[0])
         logged_in_users[email_resp[0]] = ws
 
-    while True:
-        message = ws.receive()
-        ws.send(message)
+    try:
+        while True:
+            message = ws.receive()
+            ws.send(message)
+    finally:
+        if email_resp[0] in logged_in_users:
+            del logged_in_users[email_resp[0]]
 
 def check_and_logout_user(email):
     if email in logged_in_users:
@@ -236,10 +240,13 @@ def sign_out():
         return jsonify({"success": False, "message": "Invalid token."})
     else:
         if database_helper.delete_logged_in_user(token):
+            if email_resp[0] in logged_in_users:
+                ws = logged_in_users[email_resp[0]]
+                ws.close()
+                del logged_in_users[email_resp[0]]
             return jsonify({"success": True, "message": "Successfully signed out."}) 
         else:
             return jsonify({"success": False, "message": "Something wrong."})
-
 
 # if __name__ == '__main__':
 #     app.debug = True

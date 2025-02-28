@@ -14,31 +14,32 @@ displayView = function(){
 let first_time = true;
 
 window.onload = function(){
-//code that is executed as the page is loaded.
-//You shall put your own custom code here.
-//window.alert() is not allowed to be used in your implementation.
-let token = localStorage.getItem("token");
-let nowview;
-//change view depending on token
-if (token) {
-    nowview = document.getElementById("profileview");
-} else {
-    nowview = document.getElementById("welcomeview");
-}
-document.getElementById("view").innerHTML = nowview.innerHTML;
+    //code that is executed as the page is loaded.
+    //You shall put your own custom code here.
+    //window.alert() is not allowed to be used in your implementation.
+    let token = localStorage.getItem("token");
+    let nowview;
+    //change view depending on token
+    if (token) {
+        nowview = document.getElementById("profileview");
+        start_socket();
+    } else {
+        nowview = document.getElementById("welcomeview");
+    }
+    document.getElementById("view").innerHTML = nowview.innerHTML;
 
-//only reload one time
-if(token && first_time){
-    get_homedata();
-    first_time =  false;
-}
+    //only reload one time
+    if(token && first_time){
+        get_homedata();
+        first_time =  false;
+    }
 };
 
 function start_socket() {
     let socket = new WebSocket("ws://" + location.host + "/connect")
 
     socket.onopen = function(event) {
-        // console.log("Websocket connection");
+        console.log("Websocket connection");
         token = localStorage.getItem('token');
         if (token) {
             socket.send(token);
@@ -49,14 +50,16 @@ function start_socket() {
         // console.log("Event!!");
         // console.log(event.data);
         if (event.data == 'user logout') {
-            // console.log("Log out!!!!!");
+            console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
+            window.alert("The session is expired due to login in other session.");
+            console.log("The session is expired due to login in other session.");
         }
     }
 
     socket.onclose = function(event) {
-        console.log("Websocket connection closed! ");
+        console.log(`❌ WebSocket closed: Code ${event.code}, Reason: "${event.reason}", WasClean: ${event.wasClean}`);
     };
 }
 
