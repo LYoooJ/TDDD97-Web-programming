@@ -360,11 +360,6 @@ function tryPostMessageToOther(form) {
     
         xhr.onreadystatechange = function() {
             if (xhr.readyState == xhr.DONE) {
-                console.log(xhr.responseText);
-                console.log(xhr.response);
-                let return_info = JSON.parse(xhr.responseText);
-                console.log(return_info);
-                console.log(xhr.status);
                 if (xhr.status === 201) {
                     errorMessageElement.textContent = "Message Posted";
                 } else if(xhr.status === 401) {
