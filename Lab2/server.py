@@ -114,24 +114,24 @@ def post_message():
     data = request.get_json()
     # Check validity of Data
     if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"}), 400
+        return jsonify({"success": False, "message": "Form data missing"})
     
     # Get and check token
     token = request.headers.get('Authorization')
     if token is None:
-        return jsonify({"success": False, "message": "token is required."}), 401
+        return jsonify({"success": False, "message": "token is required."})
 
     # Validate the email of  recipient.
     resp = database_helper.find_user_by_email(data['email'])
     if resp is None:
-        return jsonify({"success": False, "message": "No such user."}), 400
+        return jsonify({"success": False, "message": "No such user."})
     
     email_resp = database_helper.get_user_email_by_token(token)
     if email_resp is not None:
         database_helper.save_message(email_resp[0], data['email'], data['message'])
-        return jsonify({"success": True, "message": "Message posted"}), 201
+        return jsonify({"success": True, "message": "Message posted"})
     else:
-        return jsonify({"success": False, "message": "Invalid token."}), 401
+        return jsonify({"success": False, "message": "Invalid token."})
     
 
 @app.route('/get_user_messages_by_token', methods = ['GET'])
