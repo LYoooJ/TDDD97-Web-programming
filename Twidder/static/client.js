@@ -35,10 +35,12 @@ if(token && first_time){
 };
 
 function start_socket() {
-    let socket = new WebSocket("wss://" + location.host + "/connect")
+    let socket = new WebSocket("ws://" + location.host + "/connect")
 
     socket.onopen = function(event) {
+        console.log("Websocket connection");
         token = localStorage.getItem('token');
+        print(token)
         if (token) {
             socket.send(token);
         }
@@ -46,6 +48,7 @@ function start_socket() {
 
     socket.onmessage = function(event) {
         if (event.data == 'user logout') {
+            console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
         }
@@ -135,7 +138,6 @@ function sign_in(email, password) {
         xhr.open('POST', '/sign_in', true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
         xhr.send(JSON.stringify(login));
-        //start_socket();
         
         xhr.onreadystatechange = function() {
             if (xhr.readyState == xhr.DONE) {
@@ -143,7 +145,8 @@ function sign_in(email, password) {
                 console.log(return_info);
                 if (return_info.success) {
                     localStorage.setItem("token", return_info.data);
-                    nowview = document.getElementById("profileview");                
+                    nowview = document.getElementById("profileview");    
+                    start_socket();            
                 }   
                 else {
                     nowview = document.getElementById("welcomeview");

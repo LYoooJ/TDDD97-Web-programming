@@ -6,22 +6,26 @@ import re
 from flask_sock import Sock
 
 app = Flask(__name__, static_folder='static')
-# sock = Sock(app)
+sock = Sock(app)
 
-# logged_in_users = {}
+logged_in_users = {}
 
 @app.route("/", methods = ['GET'])
 def root():
     return app.send_static_file('client.html')
 
-# @sock.route('/connect')
-# def connect_user(ws):
-#     token = ws.receive()
-#     email_resp = database_helper.get_user_email_by_token(token)
+@sock.route('/connect')
+def connect_user(ws):
+    print("connect executed!")
+    token = ws.receive()
+    #print(token)
+    email_resp = database_helper.get_user_email_by_token(token)
     
-#     check_and_logout_user(email_resp)
-#     if email_resp != None:
-#         logged_in_users[email_resp] = ws
+    # check_and_logout_user(email_resp)
+    #print("email: ", email_resp)
+    if email_resp != None:
+        logged_in_users[email_resp] = ws
+        #print(logged_in_users)
 
 # @sock.route('/logout')
 # def check_and_logout_user(email):
@@ -31,11 +35,11 @@ def root():
 #         socket.close()
 #         del logged_in_users[email]
 
-# @sock.route('/echo')
-# def echo_socket(ws):
-#     while True:
-#         message = ws.receive()
-#         ws.send(message)
+@sock.route('/echo')
+def echo_socket(ws):
+    while True:
+        message = ws.receive()
+        ws.send(message)
 
 @app.teardown_request
 def teardown(exception):
