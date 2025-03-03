@@ -19,23 +19,24 @@ def connect_user(ws):
     token = ws.receive()
     email_resp = database_helper.get_user_email_by_token(token)
     if email_resp != None:
-        check_and_logout_user(email_resp[0])
-        logged_in_users[email_resp[0]] = ws
+        check_and_logout_user(email_resp[0], token)
+        logged_in_users[(email_resp[0], token)] = ws
 
     try:
         while True:
             message = ws.receive()
             ws.send(message)
     finally:
-        if email_resp[0] in logged_in_users:
-            del logged_in_users[email_resp[0]]
+        if (email_resp[0], token) in logged_in_users:
+            del logged_in_users[(email_resp[0], token)]
 
-def check_and_logout_user(email):
-    if email in logged_in_users:
-        socket = logged_in_users[email]
+def check_and_logout_user(email, token):
+    token = next((key[1] for key in logged_in_users if key[0] == email), None)
+    if token != None:
+        socket = logged_in_users[(email, token)]
         socket.send("user logout")
         socket.close()
-        del logged_in_users[email]
+        del logged_in_users[(email, token)]
         
 @app.teardown_request
 def teardown(exception):
@@ -240,10 +241,10 @@ def sign_out():
         return jsonify({"success": False, "message": "Invalid token."})
     else:
         if database_helper.delete_logged_in_user(token):
-            if email_resp[0] in logged_in_users:
-                ws = logged_in_users[email_resp[0]]
+            if any(key[0] == email_resp[0] for key in logged_in_users):
+                ws = logged_in_users[(email_resp[0], token)]
                 ws.close()
-                del logged_in_users[email_resp[0]]
+                del logged_in_users[(email_resp[0], token)]
             return jsonify({"success": True, "message": "Successfully signed out."}) 
         else:
             return jsonify({"success": False, "message": "Something wrong."})

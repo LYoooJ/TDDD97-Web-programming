@@ -53,7 +53,7 @@ function start_socket() {
             console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
-            window.alert("The session is expired due to login in other session.");
+            document.getElementById("logout_notification").innerText = "The session is expired due to login in other session.";
             console.log("The session is expired due to login in other session.");
         }
     }

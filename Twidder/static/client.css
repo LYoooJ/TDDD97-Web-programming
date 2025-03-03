@@ -338,3 +338,8 @@ select {
     text-align: left;
     margin: 1px auto;
 }
+
+#logout_notification {
+    text-align: center;
+    color: black;
+}
