@@ -41,7 +41,6 @@ def check_and_logout_user(email):
 def teardown(exception):
     database_helper.disconnect()
 
-# 201, 400, 409, 405, 500
 @app.route('/sign_up', methods = ['POST'])
 def sign_up():
     data = request.get_json()
@@ -67,8 +66,6 @@ def sign_up():
         else:
             return jsonify({"success": False, "message": "Failed to create a new user."}), 500 # Internal server error
 
-
-# 200, 400, 401, 405, 500
 @app.route('/sign_in', methods = ['POST'])
 def sign_in():
     data = request.get_json()
@@ -93,7 +90,6 @@ def sign_in():
     else:
         return jsonify({"success": False, "message": "Wrong Email"}), 404 # Not found
 
-# 200, 400, 401, 405, 500
 @app.route('/change_password', methods = ['PUT'])
 def change_password():
     data = request.get_json()
@@ -260,8 +256,6 @@ def get_user_message_by_email(email):
     except Exception as e:
         return jsonify({"success": False, "message": "Internal Server Error"}), 500
 
-
-# 200, 400, 401, 405, 500
 @app.route('/sign_out', methods = ['DELETE'])
 def sign_out():
     token = request.headers.get('Authorization')
