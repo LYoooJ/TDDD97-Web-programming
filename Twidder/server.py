@@ -122,60 +122,78 @@ def change_password():
 
 @app.route('/get_user_data_by_token', methods = ['GET'])
 def get_user_data_by_token():
-    token = request.headers.get('Authorization')
-    if token == None:
-        return jsonify({"success": False, "message": "token is required."})
-    
-    email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp != None:
-        search_resp = database_helper.find_user_by_email(email_resp[0])
+     if request.method != 'GET':
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+     try:
+        token = request.headers.get('Authorization')
+        if token == None:
+            return jsonify({"success": False, "message": "token is required."}), 401
+        
+        email_resp = database_helper.get_user_email_by_token(token)
+        if email_resp != None:
+            search_resp = database_helper.find_user_by_email(email_resp[0])
 
-        ## Delete password from returned data
-        user_data = list(search_resp)
-        del user_data[1]
-        userdata = tuple(user_data)
-        return jsonify({"success": True, "message": "User data retrieved.", "data": userdata})
-    else:
-        return jsonify({"success": False, "message": "Invalid token."})
+            ## Delete password from returned data
+            user_data = list(search_resp)
+            del user_data[1]
+            userdata = tuple(user_data)
+            return jsonify({"success": True, "message": "User data retrieved.", "data": userdata}), 200
+        else:
+            return jsonify({"success": False, "message": "Invalid token."}), 401
+     except Exception as e:
+        return jsonify({"success": False, "message": "Internal Server Error"}), 500             
+
 
 
 @app.route('/post_message', methods = ['POST'])
 def post_message():
-    data = request.get_json()
-    # Check validity of Data
-    if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"}), 400
-    
-    # Get and check token
-    token = request.headers.get('Authorization')
-    if token == None:
-        return jsonify({"success": False, "message": "token is required."}), 401
+    if request.method != 'POST':
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+    try:
+        data = request.get_json()
+        # Check validity of Data
+        if any(value == None or value == "" for value in data.values()):
+            return jsonify({"success": False, "message": "data missing"}), 400
+        
+        # Get and check token
+        token = request.headers.get('Authorization')
+        if token == None:
+            return jsonify({"success": False, "message": "token is required."}), 401
 
-    # Validate the email of  recipient.
-    resp = database_helper.find_user_by_email(data['email'])
-    if resp == None:
-        return jsonify({"success": False, "message": "No such user."}), 400
+        # Validate the email of  recipient.
+        resp = database_helper.find_user_by_email(data['email'])
+        if resp == None:
+            return jsonify({"success": False, "message": "No such user."}), 400
+        
+        email_resp = database_helper.get_user_email_by_token(token)
+        if email_resp != None:
+            database_helper.save_message(email_resp[0], data['email'], data['message'])
+            return jsonify({"success": True, "message": "Message posted"}), 201
+        else:
+            return jsonify({"success": False, "message": "Invalid token."}), 401
+    except Exception as e:
+            return jsonify({"success": False, "message": "Internal Server Error"}), 500
     
-    email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp != None:
-        database_helper.save_message(email_resp[0], data['email'], data['message'])
-        return jsonify({"success": True, "message": "Message posted"}), 201
-    else:
-        return jsonify({"success": False, "message": "Invalid token."}), 401
     
 
 @app.route('/get_user_messages_by_token', methods = ['GET'])
 def get_user_messages_by_token():
-    token = request.headers.get('Authorization')
-    if token == None:
-        return jsonify({"success": False, "message": "token is required."})  
+    if request.method != 'GET':
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+    try:
+        token = request.headers.get('Authorization')
+        if token == None:
+            return jsonify({"success": False, "message": "token is required."}), 401 
 
-    email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp != None:
-        search_resp = database_helper.find_messages_by_email(email_resp[0])
-        return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp})
-    else:
-        return jsonify({"success": False, "message": "Invalid token."})
+        email_resp = database_helper.get_user_email_by_token(token)
+        if email_resp != None:
+            search_resp = database_helper.find_messages_by_email(email_resp[0])
+            return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp}), 200
+        else:
+            return jsonify({"success": False, "message": "Invalid token."}), 401
+    except Exception as e:
+        return jsonify({"success": False, "message": "Internal Server Error"}), 500    
+
 
 def generate_random_token():
     letters = string.ascii_letters + string.digits
@@ -190,46 +208,58 @@ def validate_email(email):
 
 @app.route('/get_user_data_by_email/<email>', methods = ['GET'])
 def get_user_data_by_email(email):
-    token = request.headers.get('Authorization')
-    if token == None:
-        return jsonify({"success": False, "message": "token is required."})  
-    
-    email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp == None:
-        return jsonify({"success": False, "message": "Invalid token."})
-    
-    search_resp = database_helper.find_user_by_email(email)
-    if search_resp == None:
-        return jsonify({"success": False, "message": "No such User."})
-    else:
-        ## Delete password from returned data
-        user_data = list(search_resp)
-        del user_data[1]
-        userdata = tuple(user_data)
-        return jsonify({"success": True, "message": "User data retrieved.", "data": userdata})
+    if request.method != 'GET':
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+    try:
+        token = request.headers.get('Authorization')
+        if token == None:
+            return jsonify({"success": False, "message": "token is required."}), 401 
+        
+        email_resp = database_helper.get_user_email_by_token(token)
+        if email_resp == None:
+            return jsonify({"success": False, "message": "Invalid token."}), 401
+        
+        search_resp = database_helper.find_user_by_email(email)
+        if search_resp == None:
+            return jsonify({"success": False, "message": "No such User."}), 404
+        else:
+            ## Delete password from returned data
+            user_data = list(search_resp)
+            del user_data[1]
+            userdata = tuple(user_data)
+            return jsonify({"success": True, "message": "User data retrieved.", "data": userdata}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": "Internal Server Error"}), 500     
+
 
 
 @app.route('/get_user_messages_by_email/<email>', methods = ['GET'])
 def get_user_message_by_email(email):
-    if email == None:
-        return jsonify({"success": False, "message": "Missing Email."}) 
+    if request.method != 'GET':
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+    try:
+        if email == None:
+            return jsonify({"success": False, "message": "Missing Email."}) , 400
     
-    if database_helper.find_user_by_email(email) == None:
-        return jsonify({"success": False, "message": "Wrong email."})
-    
-    token = request.headers.get('Authorization')
-    if token == None:
-        return jsonify({"success": False, "message": "token is required."})
-    
-    email_resp = database_helper.get_user_email_by_token(token)
-    if email_resp == None:
-        return jsonify({"success": False, "message": "Invalid token."})
-    
-    search_resp = database_helper.find_messages_by_email(email)
-    if search_resp == None:
-        return jsonify({"success": False, "message": "No such User."})
-    else:
-        return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp})
+        if database_helper.find_user_by_email(email) == None:
+            return jsonify({"success": False, "message": "No such User."}), 400
+            
+        token = request.headers.get('Authorization')
+        if token == None:
+            return jsonify({"success": False, "message": "token is required."}), 401
+            
+        email_resp = database_helper.get_user_email_by_token(token)
+        if email_resp == None:
+            return jsonify({"success": False, "message": "Invalid token."}), 401
+            
+        search_resp = database_helper.find_messages_by_email(email)
+        if search_resp == None:
+            return jsonify({"success": False, "message": "No message."}), 404
+        else:
+            return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": "Internal Server Error"}), 500
+
 
 # 200, 400, 401, 405, 500
 @app.route('/sign_out', methods = ['DELETE'])

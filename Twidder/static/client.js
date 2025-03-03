@@ -75,7 +75,7 @@ function get_homedata(){
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            if (return_info.success) {
+            if (xhr.status === 200) {
                 document.getElementById("email_info").innerText = return_info.data[0];
                 document.getElementById("firstname_info").innerText = return_info.data[1];
                 document.getElementById("familyname_info").innerText = return_info.data[2];
@@ -84,6 +84,12 @@ function get_homedata(){
                 document.getElementById("country_info").innerText = return_info.data[5];
 
                 loadMessage("message_container_home", return_info.data[0]);
+            }else if(xhr.status === 401){
+                logging.error('token problem')
+            }else if(xhr.status === 405){
+                logging.error('method problem')          
+            }else{
+                logging.error('Internal Server Error')
             }
         }
     }
@@ -333,7 +339,7 @@ function trySearchUser(form) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            if (return_info.success) {
+            if (xhr.status === 200) {
                 document.getElementById("search_email_info").innerText = return_info.data[0];
                 document.getElementById("search_firstname_info").innerText = return_info.data[1]
                 document.getElementById("search_familyname_info").innerText = return_info.data[2];
@@ -348,7 +354,15 @@ function trySearchUser(form) {
                     searchUserInfo.classList.add("on");
                 }
             } else {
-                errorMsg.textContent = return_info.message;
+                if(xhr.status === 401){
+                    errorMsg.textContent = "You are not sign in."
+                }else if(xhr.status === 405){
+                    errorMsg.textContent = "You using the wrong method to get the userdata."
+                }else if(xhr.status === 404){
+                    errorMsg.textContent = "We can't get such userdata."
+                }else{
+                    errorMsg.textContent = "Seems the server has something wrong";
+                }
                 let searchUserInfo = document.getElementById("searchuserinfo");
                 if (searchUserInfo.classList.contains("on")) {
                     searchUserInfo.classList.remove("on");
@@ -418,8 +432,16 @@ function tryPostMessage(form){
                     errorMessageElement.textContent = "Message Posted";
                 } else if(xhr.status === 401) {
                     errorMessageElement.textContent = "You are not signed in";
-                } else {
-                    errorMessageElement.textContent = "No such User";
+                } else if(xhr.status === 400){
+                    if(return_info.message === "data missing"){
+                        errorMessageElement.textContent = "Please enter the message";
+                    }else{
+                        errorMessageElement.textContent = "No such user";
+                    }
+                }else if(xhr.status === 405){
+                    errorMessageElement.textContent = "Using wrong method";
+                }else{
+                    errorMessageElement.textContent = "Seems the server has something wrong";
                 }
             }
         }    
@@ -455,8 +477,16 @@ function tryPostMessageToOther(form) {
                     errorMessageElement.textContent = "Message Posted";
                 } else if(xhr.status === 401) {
                     errorMessageElement.textContent = "You are not signed in";
-                } else {
-                    errorMessageElement.textContent = "No such User";
+                } else if(xhr.status === 400){
+                    if(return_info.message === "data missing"){
+                        errorMessageElement.textContent = "Please enter the message";
+                    }else{
+                        errorMessageElement.textContent = "No such user";
+                    }
+                }else if(xhr.status === 405){
+                    errorMessageElement.textContent = "Using wrong method";
+                }else{
+                    errorMessageElement.textContent = "Seems the server has something wrong";
                 }
             }
         }    
@@ -480,12 +510,24 @@ function loadMessage(message_container, email) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState === xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            messageContainer.innerHTML = [];
-            if (return_info.data) {
-                return_info.data.forEach(e => {
-                    let newMsg = '<div>' + e[0] + ': ' + e[2] + '</div>';
-                    messageContainer.innerHTML += newMsg;
-                });
+            if (xhr.status === 200){
+                messageContainer.innerHTML = [];
+                if (return_info.data) {
+                    return_info.data.forEach(e => {
+                        let newMsg = '<div>' + e[0] + ': ' + e[2] + '</div>';
+                        messageContainer.innerHTML += newMsg;
+                    });
+                }
+            }else if(xhr.status === 401){
+                logging.error('token problem')
+            }else if(xhr.status === 405){
+                logging.error('method problem')
+            }else if(xhr.status === 400){
+                logging.error('email problem')
+            }else if(xhr.status === 404){
+                logging.error("can't get message for such email")
+            }else{
+                logging.error('Internal Server Error')
             }
         }
     }         
