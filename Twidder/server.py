@@ -19,7 +19,6 @@ def connect_user(ws):
     token = ws.receive()
     email_resp = database_helper.get_user_email_by_token(token)
     if email_resp != None:
-        check_and_logout_user(email_resp[0], token)
         logged_in_users[(email_resp[0], token)] = ws
 
     try:
@@ -30,7 +29,7 @@ def connect_user(ws):
         if (email_resp[0], token) in logged_in_users:
             del logged_in_users[(email_resp[0], token)]
 
-def check_and_logout_user(email, token):
+def check_and_logout_user(email):
     token = next((key[1] for key in logged_in_users if key[0] == email), None)
     if token != None:
         socket = logged_in_users[(email, token)]
@@ -81,6 +80,7 @@ def sign_in():
     if search_resp != None:
         if search_resp[1] == data['password']:
             token = generate_random_token()
+            check_and_logout_user(data['username'])
             resp = database_helper.save_token_info(data['username'], token)
             if resp:
                 return jsonify({"success": True, "message": "Successfully signed in", "data": token})
