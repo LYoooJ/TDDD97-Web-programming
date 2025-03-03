@@ -118,10 +118,24 @@ function signUp(form){
                 sign_in(form.email_signup.value, form.password_signup.value);
                 document.getElementById("view").innerHTML = nowview.innerHTML;
                 get_homedata();
-    
+                
                 let errorMessageElement = document.getElementById("error_message");
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = return_info.message;
+                if (xhr.status === 400) {
+                    if (return_info.message === "Form data missing") {
+                        errorMessageElement.textContent = "Form data is incomplete";
+                    }
+                    else if (return_info.message === "Wrong email") {
+                        errorMessageElement.textContent = "Invalid email. Please submit a valid email.";
+                    }   
+                    else { // Password length
+                        errorMessageElement.textContent = "Password must be at least 8 characters.";
+                    }
+                }
+                else if (xhr.status === 409) {
+                    errorMessageElement.textContent = "This email is used by other user already. Please try another one.";
+                }
+                else { // 500(Internal server error)
+                    errorMessageElement.textContent = "Failed to signup due to an internal server error. Please try again later.";
                 }
             }
         }
@@ -129,7 +143,6 @@ function signUp(form){
     catch(e) {
         console.log(e);
     }
-
 }
 
 function sign_in(email, password) {
@@ -160,8 +173,17 @@ function sign_in(email, password) {
                     get_homedata();
     
                 let errorMessageElement = document.getElementById("login_error_message");
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = return_info.message;
+                if (xhr.status === 400) {
+                    errorMessageElement.textContent = "Form data is incomplete";
+                }
+                else if (xhr.status === 401) {
+                    errorMessageElement.textContent = "Incorrect password. Please try again.";
+                }
+                else if (xhr.status === 404) {
+                    errorMessageElement.textContent = "The entered username does not exist! Please try again!"
+                }
+                else { // 500(Internal server error)
+                    errorMessageElement.textContent = "Failed to signin due to an internal server error. Please try again later.";
                 }
             }
         }
@@ -194,8 +216,16 @@ function signout_validate() {
             }   
             else {
                 let errorMessageElement = document.getElementById("signout_error");
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = return_info.message;
+                if (xhr.status === 401) {
+                    if (return_info.message === "token is required.") {
+                        errorMessageElement.textContent = "Your request must contain the token."
+                    }
+                    else {
+                        errorMessageElement.textContent = "The token is incorrect or expired."
+                    }
+                }
+                else { // 500(Internal server error)
+                    errorMessageElement.textContent = "Failed to signout due to an internal server error. Please try again later.";
                 }
             }
         }
@@ -232,7 +262,24 @@ function tryChangePassword(form) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-            errorMsg.textContent = return_info.message;
+
+            if (xhr.status === 400) {
+                errorMsg.textContent = "Form data is incomplete";
+            }
+            else if (xhr.status === 401) {
+                if (return_info.message === "token is required.") {
+                    errorMsg.textContent = "Your request must contain the token.";
+                }
+                else if (return_info.message === "Wrong password.") {
+                    errorMsg.textContent = "Incorrect password. Please try again.";
+                }
+                else {
+                    errorMsg.textContent = "The token is incorrect or expired.";
+                }
+            }
+            else {
+                errorMsg.textContent = "Failed to change password due to an internal server error. Please try again later.";
+            }
         }
     }
 }

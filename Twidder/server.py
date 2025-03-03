@@ -41,39 +41,41 @@ def check_and_logout_user(email):
 def teardown(exception):
     database_helper.disconnect()
 
+# 201, 400, 409, 405, 500
 @app.route('/sign_up', methods = ['POST'])
 def sign_up():
     data = request.get_json()
     # Check validity of Data
     if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"})
+        return jsonify({"success": False, "message": "Form data missing"}), 400 # Bad request
 
     # Check validity of Email
     if validate_email(data['email']) is False:
-        return jsonify({"success": False, "message": "Wrong email"})
+        return jsonify({"success": False, "message": "Wrong email"}), 400 # Bad request
 
     # Check password length
     if len(data['password']) <8:
-        return jsonify({"success": False, "message": "password length"})
+        return jsonify({"success": False, "message": "password length"}), 400 # Bad request
     
     # Check if user already exist
     if database_helper.find_user_by_email(data['email']) != None:
-        return jsonify({"success": False, "message": "User already exists."})
+        return jsonify({"success": False, "message": "User already exists."}), 409 # Conflict
     else:
         resp = database_helper.create_user(data['email'], data['password'], data['firstname'], data['familyname'], data['gender'], data['city'], data['country'])
         if resp:
-            return jsonify({"success": True, "message": "Successfully created a new user."})
+            return jsonify({"success": True, "message": "Successfully created a new user."}), 201 # Created
         else:
-            return jsonify({"success": False, "message": "Failed to create a new user."})
+            return jsonify({"success": False, "message": "Failed to create a new user."}), 500 # Internal server error
 
 
+# 200, 400, 401, 405, 500
 @app.route('/sign_in', methods = ['POST'])
 def sign_in():
     data = request.get_json()
 
     # Check validity of Data
     if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"})
+        return jsonify({"success": False, "message": "Form data missing"}), 400 # Bad Request
     
     # Check if user with the email exists
     search_resp = database_helper.find_user_by_email(data['username'])
@@ -83,25 +85,25 @@ def sign_in():
             check_and_logout_user(data['username'])
             resp = database_helper.save_token_info(data['username'], token)
             if resp:
-                return jsonify({"success": True, "message": "Successfully signed in", "data": token})
+                return jsonify({"success": True, "message": "Successfully signed in", "data": token}), 200 # OK
             else:
-                return jsonify({"success": False, "message": "Error"})
+                return jsonify({"success": False, "message": "Error"}), 500 # Internal server error
         else:
-            return jsonify({"success": False, "message": "Wrong password"})
+            return jsonify({"success": False, "message": "Wrong password"}), 401 # Unauthorized
     else:
-        return jsonify({"success": False, "message": "Wrong Email"})
+        return jsonify({"success": False, "message": "Wrong Email"}), 404 # Not found
 
-
+# 200, 400, 401, 405, 500
 @app.route('/change_password', methods = ['PUT'])
 def change_password():
     data = request.get_json()
     # Check validity of Data
     if any(value == None or value == "" for value in data.values()):
-        return jsonify({"success": False, "message": "Form data missing"})
+        return jsonify({"success": False, "message": "Form data missing"}), 400 # Bad Request
     
     token = request.headers.get('Authorization')
     if token == None:
-        return jsonify({"success": False, "message": "token is required."})
+        return jsonify({"success": False, "message": "token is required."}), 401 # Unauthorized
     
     email_resp = database_helper.get_user_email_by_token(token)
     if email_resp != None:
@@ -109,13 +111,13 @@ def change_password():
         if search_resp[1] == data['oldpassword']:
             update_resp = database_helper.update_password(data['newpassword'], email_resp[0])
             if update_resp:
-                return jsonify({"success": True, "message": "Password changed."})
+                return jsonify({"success": True, "message": "Password changed."}), 200 # Ok
             else:
-                return jsonify({"success": False, "message": "Something wrong."})
+                return jsonify({"success": False, "message": "Something wrong."}), 500 # Internal server error
         else:
-            return jsonify({"success": False, "message": "Wrong password."})
+            return jsonify({"success": False, "message": "Wrong password."}), 401 # Unauthorized
     else:
-        return jsonify({"success": False, "message": "Invalid token."})
+        return jsonify({"success": False, "message": "Invalid token."}), 401 # Unauthorized
 
 
 @app.route('/get_user_data_by_token', methods = ['GET'])
@@ -229,25 +231,25 @@ def get_user_message_by_email(email):
     else:
         return jsonify({"success": True, "message": "User messages retrieved.", 'data': search_resp})
 
-
+# 200, 400, 401, 405, 500
 @app.route('/sign_out', methods = ['DELETE'])
 def sign_out():
     token = request.headers.get('Authorization')
     if token == None:
-        return jsonify({"success": False, "message": "token is required."})
+        return jsonify({"success": False, "message": "token is required."}), 401 # Unauthorized
 
     email_resp = database_helper.get_user_email_by_token(token)
     if email_resp == None:
-        return jsonify({"success": False, "message": "Invalid token."})
+        return jsonify({"success": False, "message": "Invalid token."}), 401 # Unauthorized
     else:
         if database_helper.delete_logged_in_user(token):
             if any(key[0] == email_resp[0] for key in logged_in_users):
                 ws = logged_in_users[(email_resp[0], token)]
                 ws.close()
                 del logged_in_users[(email_resp[0], token)]
-            return jsonify({"success": True, "message": "Successfully signed out."}) 
+            return jsonify({"success": True, "message": "Successfully signed out."}), 200 # Ok
         else:
-            return jsonify({"success": False, "message": "Something wrong."})
+            return jsonify({"success": False, "message": "Something wrong."}), 500 # Internal server error
 
 # if __name__ == '__main__':
 #     app.debug = True
