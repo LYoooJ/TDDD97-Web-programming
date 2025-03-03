@@ -268,8 +268,11 @@ function tryChangePassword(form) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
-
-            if (xhr.status === 400) {
+            
+            if (xhr.status === 200) {
+                errorMsg.textContent = "Password is changed!";
+            }
+            else if (xhr.status === 400) {
                 errorMsg.textContent = "Form data is incomplete";
             }
             else if (xhr.status === 401) {

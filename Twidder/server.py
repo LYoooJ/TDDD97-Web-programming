@@ -281,6 +281,6 @@ def sign_out():
         else:
             return jsonify({"success": False, "message": "Something wrong."}), 500 # Internal server error
 
-# if __name__ == '__main__':
-#     app.debug = True
-#     app.run()
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
