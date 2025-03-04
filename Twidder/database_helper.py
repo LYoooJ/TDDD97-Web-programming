@@ -82,3 +82,11 @@ def delete_logged_in_user(token):
         return True
     except Exception as e:
         return False    
+
+def delete_message(fromemail, toemail, msg):
+    try:
+        get_db().execute("DELETE FROM messages WHERE fromemail = ? AND toemail = ? AND msg = ? ;", [fromemail, toemail, msg])
+        get_db().commit()
+        return True
+    except Exception as e:
+        return False
