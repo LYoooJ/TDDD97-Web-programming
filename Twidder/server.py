@@ -256,6 +256,21 @@ def get_user_message_by_email(email):
     except Exception as e:
         return jsonify({"success": False, "message": "Internal Server Error"}), 500
 
+@app.route('/delete_msg', methods = ['DELETE'])
+def delete_msg():
+    data = request.get_json()
+    token = request.headers.get('Authorization')
+    if token == None:
+        return jsonify({"success": False, "message": "token is required."}), 401 # Unauthorized 
+    email_resp = database_helper.get_user_email_by_token(token)
+    if email_resp == None:
+        return jsonify({"success": False, "message": "Invalid token."}), 401 # Unauthorized
+    else:
+        if database_helper.delete_message(data['fromemail'], data['toemail'], data['msg']):
+            return jsonify({"success": True, "message": "Successfully signed out."}), 200 # Ok
+        else:
+            return jsonify({"success": False, "message": "Something wrong."}), 500 # Internal server error
+
 @app.route('/sign_out', methods = ['DELETE'])
 def sign_out():
     token = request.headers.get('Authorization')

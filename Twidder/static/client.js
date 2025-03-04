@@ -517,9 +517,13 @@ function loadMessage(message_container, email) {
                 messageContainer.innerHTML = [];
                 if (return_info.data) {
                     return_info.data.forEach(e => {
-                        let newMsg = '<div>' + e[0] + ': ' + e[2] + '</div>';
+                        let newMsg = `<div class="message"  draggable="true" data-from="${e[0]}" data-to="${e[1]}" data-msg="${e[2]}" >
+                        <span class="message-author">${e[0]}:</span>
+                        <span class="message-content">${e[2]}</span>
+                        </div>`;
                         messageContainer.innerHTML += newMsg;
                     });
+                    addDragAndDrop();
                 }
             }else if(xhr.status === 401){
                 logging.error('token problem')
@@ -534,4 +538,74 @@ function loadMessage(message_container, email) {
             }
         }
     }         
+}
+
+function addDragAndDrop() {
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(msg => {
+        msg.addEventListener('dragstart', handleDragStart);
+    });
+    const trashBinContainer = document.getElementById('trash-bin-container');
+    if(trashBinContainer){
+        trashBinContainer.addEventListener('dragover', handleDragOver);
+        trashBinContainer.addEventListener('drop', handleDrop);
+    }
+}
+
+function handleDragStart(event) {
+    if (!event.target.id) {
+        event.target.id = 'msg-' + Date.now(); 
+    }
+    console.log('Dragging:', event.target.id);
+    event.dataTransfer.setData('text/plain', event.target.id);
+}
+
+function handleDragOver(event) {
+    event.preventDefault(); 
+    event.dataTransfer.dropEffect = "move"; 
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    const messageId = event.dataTransfer.getData('text/plain');
+    const draggedMessage = document.getElementById(messageId);
+    if (!messageId) {
+        console.warn("No message ID received.");
+        return;
+    }
+    if (draggedMessage) {
+        const fromemail = draggedMessage.getAttribute('data-from');
+        const toemail = draggedMessage.getAttribute('data-to');
+        const msg = draggedMessage.getAttribute('data-msg');
+        draggedMessage.remove();
+        deleteMessage(fromemail, toemail, msg);
+    }
+}
+
+
+
+
+function deleteMessage(fromemail, toemail, msg){
+    let token = localStorage.getItem("token");
+    var xhr = new XMLHttpRequest();
+    let post ={
+        "fromemail": fromemail,
+        "toemail": toemail,
+        "msg" :msg,
+    }
+    xhr.open('DELETE', '/delete_msg', true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); 
+    xhr.setRequestHeader("Authorization", token);
+    xhr.send(JSON.stringify(post)); 
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == xhr.DONE) {
+            if (xhr.status === 200) {
+                logging.error = "Message delete";
+            } else if(xhr.status === 401) {
+                logging.error = "You are not signed in";
+            } else{
+                logging.error = "Seems the server has something wrong";
+            }
+        }
+    }    
 }

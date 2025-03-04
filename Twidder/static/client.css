@@ -193,6 +193,12 @@ select {
     float: left;
 }
 
+#trash_bin{
+    float: right;
+    width: 50px;
+    height: 50px;
+}
+
 /* post area(home) */
 .postmsg {
     float: left;
