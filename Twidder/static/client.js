@@ -39,7 +39,6 @@ function start_socket() {
     let socket = new WebSocket("ws://" + location.host + "/connect")
 
     socket.onopen = function(event) {
-        console.log("Websocket connection");
         token = localStorage.getItem('token');
         if (token) {
             socket.send(token);
@@ -47,14 +46,10 @@ function start_socket() {
     }
 
     socket.onmessage = function(event) {
-        // console.log("Event!!");
-        // console.log(event.data);
         if (event.data == 'user logout') {
-            console.log("Log out!!!!!");
             localStorage.removeItem('token');
             displayView();
             document.getElementById("logout_notification").innerText = "The session is expired due to login in other session.";
-            console.log("The session is expired due to login in other session.");
         }
     }
 
@@ -76,20 +71,27 @@ function get_homedata(){
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
             if (xhr.status === 200) {
-                document.getElementById("email_info").innerText = return_info.data[0];
-                document.getElementById("firstname_info").innerText = return_info.data[1];
-                document.getElementById("familyname_info").innerText = return_info.data[2];
-                document.getElementById("gender_info").innerText = return_info.data[3];
-                document.getElementById("city_info").innerText = return_info.data[4];
-                document.getElementById("country_info").innerText = return_info.data[5];
+                let user_data = {
+                    email: return_info.data[0],
+                    firstname: return_info.data[1],
+                    familyname: return_info.data[2],
+                    gender: return_info.data[3],
+                    city: return_info.data[4],
+                    country: return_info.data[5],
+                    showTrash: true
+                };
+                let source = document.getElementById("profile-template").innerHTML;
+                let template = Handlebars.compile(source);
+                let rendered = template(user_data);
+                document.getElementById("person_info").innerHTML = rendered;
 
                 loadMessage("message_container_home", return_info.data[0]);
             }else if(xhr.status === 401){
-                logging.error('token problem')
+                console.log('token problem')
             }else if(xhr.status === 405){
-                logging.error('method problem')          
+                console.log('method problem')          
             }else{
-                logging.error('Internal Server Error')
+                console.log('Internal Server Error')
             }
         }
     }
@@ -343,13 +345,20 @@ function trySearchUser(form) {
         if (xhr.readyState == xhr.DONE) {
             let return_info = JSON.parse(xhr.responseText);
             if (xhr.status === 200) {
-                document.getElementById("search_email_info").innerText = return_info.data[0];
-                document.getElementById("search_firstname_info").innerText = return_info.data[1]
-                document.getElementById("search_familyname_info").innerText = return_info.data[2];
-                document.getElementById("search_gender_info").innerText = return_info.data[3];
-                document.getElementById("search_city_info").innerText = return_info.data[4];
-                document.getElementById("search_country_info").innerText = return_info.data[5];
-            
+                let user_data = {
+                    email: return_info.data[0],
+                    firstname: return_info.data[1],
+                    familyname: return_info.data[2],
+                    gender: return_info.data[3],
+                    city: return_info.data[4],
+                    country: return_info.data[5],
+                    showTrash: false
+                };
+                let source = document.getElementById("profile-template").innerHTML;
+                let template = Handlebars.compile(source);
+                let rendered = template(user_data);
+                document.getElementById("search_person_info").innerHTML = rendered;
+
                 loadMessage("message_container", return_info.data[0]);
     
                 let searchUserInfo = document.getElementById("searchuserinfo");
@@ -383,7 +392,9 @@ function msgRenew(tabId) {
         loadMessage("message_container_home", document.getElementById("email_info").innerText);
     }
     else if (tabId === "browse") {
-        loadMessage("message_container", document.getElementById("search_email_info").innerText);
+        let container = document.getElementById("search_person_info"); 
+        let email = container.querySelector("#email_info").textContent;
+        loadMessage("message_container", email);
     }
 }
 
@@ -460,8 +471,8 @@ function tryPostMessageToOther(form) {
         let text = form.post_msg_content_to_other.value;
         let token = localStorage.getItem("token");
         let errorMessageElement = document.getElementById("post_error_message_to_other");
-        let email = document.getElementById("search_email_info").textContent;
-    
+        let container = document.getElementById("search_person_info"); 
+        let email = container.querySelector("#email_info").textContent;
         let post = {
             "email": email,
             "message": text
@@ -516,25 +527,32 @@ function loadMessage(message_container, email) {
             if (xhr.status === 200){
                 messageContainer.innerHTML = [];
                 if (return_info.data) {
-                    return_info.data.forEach(e => {
-                        let newMsg = `<div class="message"  draggable="true" data-from="${e[0]}" data-to="${e[1]}" data-msg="${e[2]}" >
-                        <span class="message-author">${e[0]}:</span>
-                        <span class="message-content">${e[2]}</span>
-                        </div>`;
-                        messageContainer.innerHTML += newMsg;
-                    });
+                    let messages = return_info.data.map(e => ({
+                        from: e[0],
+                        to: e[1],
+                        msg: e[2]
+                    }));
+                    
+                    let source = document.getElementById("msg-template").innerHTML;
+                    let template = Handlebars.compile(source);
+                    let result_html = "";
+                    messages.forEach(function(item, index) {
+                        result_html += template(item);
+                    })
+                    document.getElementById(message_container).innerHTML = result_html;
+
                     addDragAndDrop();
                 }
             }else if(xhr.status === 401){
-                logging.error('token problem')
+                console.log('token problem')
             }else if(xhr.status === 405){
-                logging.error('method problem')
+                console.log('method problem')
             }else if(xhr.status === 400){
-                logging.error('email problem')
+                console.log('email problem')
             }else if(xhr.status === 404){
-                logging.error("can't get message for such email")
+                console.log("can't get message for such email")
             }else{
-                logging.error('Internal Server Error')
+                console.log('Internal Server Error')
             }
         }
     }         
@@ -556,7 +574,6 @@ function handleDragStart(event) {
     if (!event.target.id) {
         event.target.id = 'msg-' + Date.now(); 
     }
-    console.log('Dragging:', event.target.id);
     event.dataTransfer.setData('text/plain', event.target.id);
 }
 
@@ -583,8 +600,6 @@ function handleDrop(event) {
 }
 
 
-
-
 function deleteMessage(fromemail, toemail, msg){
     let token = localStorage.getItem("token");
     var xhr = new XMLHttpRequest();
@@ -600,11 +615,11 @@ function deleteMessage(fromemail, toemail, msg){
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE) {
             if (xhr.status === 200) {
-                logging.error = "Message delete";
+                console.log = "Message delete";
             } else if(xhr.status === 401) {
-                logging.error = "You are not signed in";
+                console.log = "You are not signed in";
             } else{
-                logging.error = "Seems the server has something wrong";
+                console.log = "Seems the server has something wrong";
             }
         }
     }    
