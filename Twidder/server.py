@@ -234,9 +234,6 @@ def get_user_message_by_email(email):
     if request.method != 'GET':
         return jsonify({"success": False, "message": "Method not allowed"}), 405
     try:
-        if email == None:
-            return jsonify({"success": False, "message": "Missing Email."}) , 400
-    
         if database_helper.find_user_by_email(email) == None:
             return jsonify({"success": False, "message": "No such User."}), 400
             
