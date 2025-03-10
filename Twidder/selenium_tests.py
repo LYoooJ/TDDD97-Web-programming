@@ -227,7 +227,7 @@ class SeleniumTests(unittest.TestCase):
             self.driver.find_element(By.ID, "repeatchangepsw").clear()
             time.sleep(1)
 
-            # Change password with unmatched new passwords
+            # Change password with matched new passwords
             self.driver.find_element(By.ID, "currentpsw").send_keys(self.test_user['password'])
             self.driver.find_element(By.ID, "changepsw").send_keys(new_password)
             self.driver.find_element(By.ID, "repeatchangepsw").send_keys(new_password)
